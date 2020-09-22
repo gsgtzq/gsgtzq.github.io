@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+         
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>使用Docker来运行Wordpress</title>
+        
+        <style>
+
+    html body {
+        font-family: 'Raleway', sans-serif;
+        background-color: white;
+    }
+
+    :root {
+        --accent: red;
+        --border-width:  5px ;
+    }
+
+</style>
+
+
+<link rel="stylesheet" href="https://blog.gsgtzq.com/css/main.css">
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway" type="text/css">
+
+
+ <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/solarized-dark.min.css"> 
+
+
+<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+ 
+
+
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/go.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/objectivec.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/python.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/bash.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/nginx.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/json.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/ini.min.js"></script> 
+
+    <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script>$(document).on('click', function() { $('.collapse').collapse('hide'); })</script>
+ <meta name="generator" content="Hugo 0.75.1" />
+        
+        
+
+        
+        
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-102689387-1"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments)};
+          gtag('js', new Date());
+
+          gtag('config', 'UA-102689387-1');
+        </script>
+        
+    </head>
+
+    
+    
+    <script src="https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+    <body>
+         
+        <nav class="navbar navbar-default navbar-fixed-top">
+
+            <div class="container">
+
+                <div class="navbar-header">
+
+                    <a class="navbar-brand visible-xs" href="#">使用Docker来运行Wordpress</a>
+
+                    <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                </div>
+
+                <div class="collapse navbar-collapse">
+
+                    
+                        <ul class="nav navbar-nav">
+                            
+                                <li><a href="/">Home</a></li>
+                            
+                                <li><a href="/post/">Posts</a></li>
+                            
+                                <li><a href="/tags/">Tags</a></li>
+                            
+                        </ul>
+                    
+
+                    
+                        <ul class="nav navbar-nav navbar-right">
+                            
+                                <li class="navbar-icon"><a href="mailto:gsgtzq@gmail.com"><i class="fa fa-envelope-o"></i></a></li>
+                            
+                                <li class="navbar-icon"><a href="https://github.com/gsgtzq/"><i class="fa fa-github"></i></a></li>
+                            
+                        </ul>
+                    
+
+                </div>
+
+            </div>
+
+        </nav>
+
+
+<main>
+
+    <div class="item">
+
+    
+    
+    
+
+    
+    
+
+    <h4><a href="/post/running-wordpress-with-docker/">使用Docker来运行Wordpress</a></h4>
+    <h5>2017-07-17T11:39:45&#43;08:00</h5>
+    
+
+</div>
+
+
+    <br> <div class="text-justify"><p>很早的时候想维护一个个人Blog，一开始通过 github home page + jekyll，奈何没精力再去把ruby玩溜，自己也不是个擅长改写前端页面的人，无疾而终。今天终于鼓起勇气，买了服务器和域名，部署了wordpress，毕竟wordpress易用易上手，模板也多，也就懒得自己改了。既然本Blog是运行在Docker之上的，那第一篇文章也就来说说这个吧。</p>
+<h2 id="部署方式介绍">部署方式介绍</h2>
+<ul>
+<li>我的服务器安装的是Arch Linux，自己也是比较喜欢这个极简的Linux发行版。</li>
+<li>我使用了docker-compose来做镜像编排工具，nginx，mysql(mairadb)，wordpress分别运行于不同的容器。</li>
+<li>托上面两个先决条件的福，下面的内容大家根据自己的实际环境，酌情选择。</li>
+</ul>
+<h2 id="准备工作">准备工作</h2>
+<h5 id="安装docker">安装Docker</h5>
+<p>托Arch Linux的福，安装Docker非常简单。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pacman -S docker
+</code></pre></div><h5 id="安装docker-compose">安装docker-compose</h5>
+<p>同样是托Arch的福，安装依旧简单粗暴。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pacman -S docker-compose
+</code></pre></div><h2 id="准备配置">准备配置</h2>
+<h5 id="首先我们需要做的是准备好docker-wordpress运行的用户执行以下命令添加一个叫wordpress的新用户将它添加到docker用户组并为它设置密码">首先我们需要做的是准备好docker wordpress运行的用户，执行以下命令，添加一个叫wordpress的新用户，将它添加到docker用户组，并为它设置密码</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">useradd -m -s /bin/zsh wordpress
+usermod -a -G docker wordpress
+passwd wordpress
+</code></pre></div><h5 id="紧接着创建一些目录保存docker-compose配置文件存储运行产生的文件让数据库落地到本机而不是容器执行以下命令">紧接着，创建一些目录，保存docker-compose配置文件，存储运行产生的文件，让数据库落地到本机而不是容器，执行以下命令</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">su - wordpress
+cd
+mkdir wordpress-compose
+touch docker-compose.yml
+mkdir -p wordpress-compose/db-data
+mkdir -p wordpress-compose/logs/nginx
+mkdir -p wordpress-compose/nginx
+mkdir -p wordpress-compose/wordpress
+</code></pre></div><p>这些目录和文件的功能分别如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">目录或文件</th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">wordpress-compose</td>
+<td style="text-align:center">容器相关根目录</td>
+</tr>
+<tr>
+<td style="text-align:center">wordpress-compose/db-data</td>
+<td style="text-align:center">数据库数据存储目录</td>
+</tr>
+<tr>
+<td style="text-align:center">wordpress-compose/logs/nginx</td>
+<td style="text-align:center">nginx存储目录</td>
+</tr>
+<tr>
+<td style="text-align:center">wordpress-compose/nginx</td>
+<td style="text-align:center">nginx配置文件</td>
+</tr>
+<tr>
+<td style="text-align:center">wordpress-compose/wordpress</td>
+<td style="text-align:center">wordpress本体，因为安装插件等会改变php文件</td>
+</tr>
+</tbody>
+</table>
+<h5 id="接下来我们编写必要的nginx配置文件在wordpress-composenginx下新建wordpressconf文件文件中写入下面这些配置一个很经典的php-fpm的nginx配置文件">接下来我们编写必要的nginx配置文件。在wordpress-compose/nginx下新建wordpress.conf文件，文件中写入下面这些配置，一个很经典的php-fpm的nginx配置文件。</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nginx" data-lang="nginx"><span style="color:#66d9ef">server</span> {
+    <span style="color:#f92672">listen</span> <span style="color:#ae81ff">80</span>;
+    <span style="color:#f92672">server_name</span> <span style="color:#e6db74">www.gsgtzq.com</span>;
+
+    <span style="color:#f92672">root</span> <span style="color:#e6db74">/var/www/html</span>;
+    <span style="color:#f92672">index</span> <span style="color:#e6db74">index.php</span>;
+
+    <span style="color:#f92672">access_log</span> <span style="color:#e6db74">/var/log/nginx/wordpress-access.log</span>;
+    <span style="color:#f92672">error_log</span> <span style="color:#e6db74">/var/log/nginx/wordpress-error.log</span>;
+
+    <span style="color:#f92672">location</span> <span style="color:#e6db74">/</span> {
+        <span style="color:#f92672">try_files</span> $uri $uri/ <span style="color:#e6db74">/index.php?</span>$args;
+    }
+
+    <span style="color:#f92672">location</span> ~ <span style="color:#e6db74">\.php$</span> {
+        <span style="color:#f92672">try_files</span> $uri =<span style="color:#ae81ff">404</span>;
+        <span style="color:#f92672">fastcgi_split_path_info</span> <span style="color:#e6db74">^(.+\.php)(/.+)</span>$;
+        <span style="color:#f92672">fastcgi_pass</span> wordpress:<span style="color:#ae81ff">9000</span>;
+        <span style="color:#f92672">fastcgi_index</span> <span style="color:#e6db74">index.php</span>;
+        <span style="color:#f92672">include</span> <span style="color:#e6db74">fastcgi_params</span>;
+        <span style="color:#f92672">fastcgi_param</span> <span style="color:#e6db74">SCRIPT_FILENAME</span> $document_root$fastcgi_script_name;
+        <span style="color:#f92672">fastcgi_param</span> <span style="color:#e6db74">PATH_INFO</span> $fastcgi_path_info;
+    }
+}
+</code></pre></div><h5 id="接下来就是docker-compose配置文件的编写了首先将工作目录切换至刚刚创建的wordpress-compose目录用自己熟悉的编辑器打开docker-composeyml文件">接下来就是docker-compose配置文件的编写了，首先将工作目录切换至刚刚创建的wordpress-compose目录，用自己熟悉的编辑器打开docker-compose.yml文件。</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">vim docker-compose.yml
+</code></pre></div><p>先是nginx部分，我使用最新的nginx镜像，暴露80端口给本机，挂载conf.d、log、/var/www/html目录到本机，连接nginx和wordpress容器。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e"># 注释</span>
+<span style="color:#f92672">nginx</span>:
+        <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx:latest</span>
+        <span style="color:#f92672">ports</span>:
+                - <span style="color:#e6db74">&#39;80:80&#39;</span>
+        <span style="color:#f92672">volumes</span>:
+                - <span style="color:#ae81ff">./nginx:/etc/nginx/conf.d</span>
+                - <span style="color:#ae81ff">./logs/nginx:/var/log/nginx</span>
+                - <span style="color:#ae81ff">./wordpress:/var/www/html</span>
+        <span style="color:#f92672">links</span>:
+                - <span style="color:#ae81ff">wordpress</span>
+        <span style="color:#f92672">restart</span>: <span style="color:#ae81ff">always</span>
+</code></pre></div><p>然后是mysql部分，我使用了mairadb的最新镜像，挂载mysql数据存储点到本机，链接mysql和wordpress容器，通过环境变量设置mysql的默认root密码。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">mysql</span>:
+        <span style="color:#f92672">image</span>: <span style="color:#ae81ff">mariadb:latest</span>
+        <span style="color:#f92672">volumes</span>:
+                - <span style="color:#ae81ff">./db-data:/var/lib/mysql</span>
+        <span style="color:#f92672">environment</span>:
+                - <span style="color:#ae81ff">MYSQL_ROOT_PASSWORD=123345</span>
+        <span style="color:#f92672">restart</span>: <span style="color:#ae81ff">always</span>
+</code></pre></div><p>最后是wordpress本体，我使用wordpress:php7.1-fpm的镜像，挂载/var/www/html目录到本机，链接连接mysql容器和wordpress，并且使用环境变量，指定mysql主机名，表前缀，和库名。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">wordpress</span>:
+        <span style="color:#f92672">image</span>: <span style="color:#ae81ff">wordpress:php7.1-fpm</span>
+        <span style="color:#f92672">volumes</span>:
+                - <span style="color:#ae81ff">./wordpress:/var/www/html</span>
+        <span style="color:#f92672">environment</span>:
+                - <span style="color:#ae81ff">WORDPRESS_DB_NAME=wpdb</span>
+                - <span style="color:#ae81ff">WORDPRESS_TABLE_PREFIX=wp_</span>
+                - <span style="color:#ae81ff">WORDPRESS_DB_HOST=mysql</span>
+        <span style="color:#f92672">links</span>:
+                - <span style="color:#ae81ff">mysql</span>
+        <span style="color:#f92672">restart</span>: <span style="color:#ae81ff">always</span>
+</code></pre></div><p>到此位置，docker-compose的配置文件全部编写完毕。</p>
+<h2 id="启动容器">启动容器</h2>
+<p>编排文件已写完，接下来启动容器即可。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">docker-compose up -d
+</code></pre></div><p>当收到三个done以后，编排好的容器就正式启动了，我们现在可以访问本机的IP或域名来访问wordpress了。
+我还可以使用下面这些命令来检查容器的运行情况，注意，docker-compose命令<strong>只有在刚才写好配置文件的目录下执行才有效果</strong>。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">命令</th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">docker ps -a</td>
+<td style="text-align:center">查看当前<code>所有</code>运行的docker容器</td>
+</tr>
+<tr>
+<td style="text-align:center">docker-compose logs wordpress</td>
+<td style="text-align:center">查看wordpress容器的日志</td>
+</tr>
+<tr>
+<td style="text-align:center">docker-compose ps</td>
+<td style="text-align:center">查看当前编排好的应用的所有容器状态</td>
+</tr>
+<tr>
+<td style="text-align:center">docker-compose top</td>
+<td style="text-align:center">查看当前编排好的应用中各容器中的进程情况</td>
+</tr>
+</tbody>
+</table>
+<p>具体还有一些其他的办法，可以通过查阅docker手册和docker-compose文档来进行使用。</p>
+<h2 id="结束语">结束语</h2>
+<p>到此为止，使用docker来运行wordpress已经完成，从开始折腾Docker到现在少说1个半月过去了，也是学习到了非常多的东西，目前而言公司的项目想用起docker来还是有不少难度，我思考了很多使用docker对传统部署和开发带来冲击的问题，例如对开发人员的要求其实高了很多，尤其是在运维这块，基础环境部署等等……但很希望自己能把它用好了，开发受益，运维也受益。</p>
+</div>
+
+    
+    
+
+    
+
+    
+
+</main>
+
+        <footer>
+
+            <p class="copyright text-muted">© All rights reserved. Powered by <a href="https://gohugo.io">Hugo</a> and <a href="https://github.com/gsgtzq/minimal">Minimal</a></p>
+
+        </footer>
+       
+    </body>
+
+</html>
+

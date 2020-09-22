@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+         
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>CentOS 7 安装自动化测试环境排坑指南</title>
+        
+        <style>
+
+    html body {
+        font-family: 'Raleway', sans-serif;
+        background-color: white;
+    }
+
+    :root {
+        --accent: red;
+        --border-width:  5px ;
+    }
+
+</style>
+
+
+<link rel="stylesheet" href="https://blog.gsgtzq.com/css/main.css">
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway" type="text/css">
+
+
+ <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/solarized-dark.min.css"> 
+
+
+<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+ 
+
+
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/go.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/objectivec.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/python.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/bash.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/nginx.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/json.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/ini.min.js"></script> 
+
+    <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script>$(document).on('click', function() { $('.collapse').collapse('hide'); })</script>
+ <meta name="generator" content="Hugo 0.75.1" />
+        
+        
+
+        
+        
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-102689387-1"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments)};
+          gtag('js', new Date());
+
+          gtag('config', 'UA-102689387-1');
+        </script>
+        
+    </head>
+
+    
+    
+    <script src="https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+    <body>
+         
+        <nav class="navbar navbar-default navbar-fixed-top">
+
+            <div class="container">
+
+                <div class="navbar-header">
+
+                    <a class="navbar-brand visible-xs" href="#">CentOS 7 安装自动化测试环境排坑指南</a>
+
+                    <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                </div>
+
+                <div class="collapse navbar-collapse">
+
+                    
+                        <ul class="nav navbar-nav">
+                            
+                                <li><a href="/">Home</a></li>
+                            
+                                <li><a href="/post/">Posts</a></li>
+                            
+                                <li><a href="/tags/">Tags</a></li>
+                            
+                        </ul>
+                    
+
+                    
+                        <ul class="nav navbar-nav navbar-right">
+                            
+                                <li class="navbar-icon"><a href="mailto:gsgtzq@gmail.com"><i class="fa fa-envelope-o"></i></a></li>
+                            
+                                <li class="navbar-icon"><a href="https://github.com/gsgtzq/"><i class="fa fa-github"></i></a></li>
+                            
+                        </ul>
+                    
+
+                </div>
+
+            </div>
+
+        </nav>
+
+
+<main>
+
+    <div class="item">
+
+    
+    
+    
+
+    
+    
+
+    <h4><a href="/post/install-auto-test-environment-on-centos-7/">CentOS 7 安装自动化测试环境排坑指南</a></h4>
+    <h5>2017-10-19T16:07:24&#43;08:00</h5>
+    
+
+</div>
+
+
+    <br> <div class="text-justify"><h2 id="前景提要">前景提要</h2>
+<p>公司测试部门新加两台CentOS 7作为自己Android自动化测试系统的控制机，安装过程排了不少坑。既已踩坑，写下这些血和泪帮助后人。</p>
+<h2 id="环境介绍">环境介绍</h2>
+<p>整个自动化测试用到的环境有：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">名称</th>
+<th style="text-align:center">版本号</th>
+<th style="text-align:center">前置依赖</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">CentOS</td>
+<td style="text-align:center">7.4.1708</td>
+<td style="text-align:center">无</td>
+</tr>
+<tr>
+<td style="text-align:center">pyenv</td>
+<td style="text-align:center">1.1.5</td>
+<td style="text-align:center">无</td>
+</tr>
+<tr>
+<td style="text-align:center">Python</td>
+<td style="text-align:center">2.7.14</td>
+<td style="text-align:center">pyenv</td>
+</tr>
+<tr>
+<td style="text-align:center">OpenCV</td>
+<td style="text-align:center">3.3.0</td>
+<td style="text-align:center">无</td>
+</tr>
+<tr>
+<td style="text-align:center">opencv-python</td>
+<td style="text-align:center">3.3.0.10</td>
+<td style="text-align:center">python、opencv</td>
+</tr>
+<tr>
+<td style="text-align:center">JDK</td>
+<td style="text-align:center">8u144</td>
+<td style="text-align:center">无</td>
+</tr>
+<tr>
+<td style="text-align:center">Android SDK platform-tools</td>
+<td style="text-align:center">26.0.1</td>
+<td style="text-align:center">无</td>
+</tr>
+<tr>
+<td style="text-align:center">nvm</td>
+<td style="text-align:center">0.33.5</td>
+<td style="text-align:center">无</td>
+</tr>
+<tr>
+<td style="text-align:center">Node.js</td>
+<td style="text-align:center">6.7.14(LTS)</td>
+<td style="text-align:center">nvm</td>
+</tr>
+<tr>
+<td style="text-align:center">Appium</td>
+<td style="text-align:center">1.7.1</td>
+<td style="text-align:center">Node.js、JDK</td>
+</tr>
+</tbody>
+</table>
+<p>这里要简单介绍下几个跟本身测试控制机无关的一些东西：</p>
+<ul>
+<li><code>pyenv</code>是我在<code>CentOS</code>甚至所有<code>RedHat</code>系上使用Python的一个习惯。因为RedHat系的yum包管理工具使用python编写，所以他们都一定自带某个版本的Python，CentOS自己的软件仓库版本普遍偏低，所以为了使用新版Python而不与系统的Python起冲突。才使用pyenv。</li>
+<li><code>nvm</code>可以管理多版本Node.js而且不污染系统的library，安装卸载都很方便。</li>
+<li><code>Node.js</code>选用了LTS版本，我部署时，Node.js的最新版本是8.7.0，安装Appium时总是报permission denied，貌似是npm的bug，用LTS的版本居然成功了……一脸懵逼。</li>
+</ul>
+<h2 id="排坑开始">排坑开始</h2>
+<p>动工开始安装，一下所有的操作，均在<code>root权限</code>下操作。CentOS安装没啥好说的，我让运维直接纯净安装了一个最小版本的CentOS，有环境洁癖，没强迫症的请忽略我。</p>
+<h3 id="前置准备">前置准备</h3>
+<p>先要做的事情是升级一下系统（本人喜欢保持系统为最新，仁者见仁，智者见智）和准备一些基本工具，执行下列命令：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">yum update <span style="color:#f92672">&amp;&amp;</span> yum install -y git vim wget <span style="color:#f92672">&amp;&amp;</span> yum groupinstall -y <span style="color:#e6db74">&#34;Development tools&#34;</span>
+</code></pre></div><p>完成后建议重启系统。</p>
+<h3 id="pyenv">pyenv</h3>
+<p>pyenv的安装我使用了别人做好的安装脚本，执行下面列出的命令即可：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
+</code></pre></div><p>网(fang)络(huo)不(chang)好(cheng)的朋友可以自行再curl上命令加上代理参数，安装完成后，根据安装提示需要手动加入相关的环境变量：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">vim /etc/profile.d/pyenv.sh
+</code></pre></div><p>内容如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/root/.pyenv/bin:</span>$PATH<span style="color:#e6db74">&#34;</span>
+eval <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>pyenv init -<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+eval <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>pyenv virtualenv-init -<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</code></pre></div><p>完成后<code>重新登录</code>或者执行<code>source /etc/profile</code>让环境变量生效，然后就可以愉快的使用命令了。</p>
+<h3 id="python">Python</h3>
+<p>安装好pyenv以后就可以安装python了，安装python需要一些前置的库来编译python，安装命令如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">yum install -y readline-devel openssl-devel bzip2-devel sqlite-devel
+</code></pre></div><p>之后的安装就很简单了，只需要：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pyenv install 2.7.14
+pyenv local 2.7.14 <span style="color:#75715e"># 当前用户使用2.7.14版本</span>
+pyenv global 2.7.14 <span style="color:#75715e"># 所有用户使用2.7.14版本，避免切换用户后python环境失效</span>
+</code></pre></div><p>网(fang)络(huo)不(chang)好(cheng)的朋友可以使用系统变量<code>http_proxy</code>和<code>https_proxy</code>来加快安装速度……</p>
+<p>完成后<code>重新登录</code>或者执行<code>source /etc/profile</code>让设置生效，可以愉快的使用python和pip了。</p>
+<h3 id="opencv">OpenCV</h3>
+<p>OpenCV要从源码编译安装，需要先安装Cmake，OpenCV又需要高一点版本的Cmake，CentOS自带的版本不够，所以Cmake也要从源码安装（我最不喜欢CentOS的一个地方）。</p>
+<p>安装Cmake的命令：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">wget http://www.cmake.org/files/v3.1/cmake-3.1.3.tar.gz
+tar zxvf cmake-3.1.3.tar.gz
+cd cmake-3.1.3
+make <span style="color:#f92672">&amp;&amp;</span> make install
+</code></pre></div><p>完成后使用命令<code>camke --version</code>就能看到cmake的版本了。</p>
+<p>然后下载OpenCV的源码使用Cmake进行编译，命令如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">wget https://github.com/opencv/opencv/archive/3.3.0.zip
+unzip 3.3.0.zip
+cd opencv-3.3.0
+mkdir build <span style="color:#f92672">&amp;&amp;</span> cd build
+cmake .. -DCMAKE_BUILD_TYPE<span style="color:#f92672">=</span>RELEASE
+make -j8 <span style="color:#f92672">&amp;&amp;</span> make install
+</code></pre></div><p>安装完OpenCV得到一个<code>opencv_version</code>的命令，就可以打印OpenCV的版本号了。</p>
+<h3 id="opencv-python">opencv-python</h3>
+<p>这是一个python的opencv封装库，安装前需要一些系统的X11运行库来支撑运行，安装过程：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">yum install -y libSM libXrender libXext
+pip install opencv-python
+</code></pre></div><p>安装完成后，使用<code>python -c &quot;import cv2&quot;</code>可以检查是否正确安装了。</p>
+<h3 id="jdk">JDK</h3>
+<p>JDK安装了Oracle JDK，所以是直接从官网下载的，安装命令如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">wget -c --header <span style="color:#e6db74">&#34;Cookie: oraclelicense=accept-securebackup-cookie&#34;</span> http://download.oracle.com/otn-pub/java/jdk/8u144-b01/090f390dda5b47b9b721c7dfaa008135/jdk-8u144-linux-x64.rpm
+rpm -ivh jdk-8u144-linux-x64.rpm
+</code></pre></div><p>安装后使用命令<code>java -version</code>验证安装。</p>
+<h3 id="android-sdk-platform-tools">Android SDK platform-tools</h3>
+<p>既然为Android自动测试机，ADB工具肯定是必须的啦，我直接使用了谷歌官方的sdk-tools来进行安装，命令如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">wget https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip <span style="color:#75715e"># 吐槽：居然没墙</span>
+unzip sdk-tools-linux-3859397.zip
+mkdir -p /opt/android/sdk/
+mv tools /opt/android/sdk/
+cd /opt/android/sdk
+yes | ./tools/bin/sdkmanager --licenses
+./tools/bin/sdkmanager <span style="color:#e6db74">&#34;tools&#34;</span> <span style="color:#e6db74">&#34;platform-tools&#34;</span>
+</code></pre></div><p>完成后向系统添加platform-tools的环境变量：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">vim /etc/profile.d/android.sh
+</code></pre></div><p>内容如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">ANDROID_SDK_PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/opt/android/sdk&#34;</span>
+export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>ANDROID_SDK_PATH<span style="color:#e6db74">}</span><span style="color:#e6db74">/platform-tools/:</span><span style="color:#e6db74">${</span>PATH<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</code></pre></div><p>完成后<code>重新登录</code>或者执行<code>source /etc/profile</code>让环境变量生效，执行<code>adb version</code>验证安装情况。</p>
+<h3 id="nvm">nvm</h3>
+<p>nvm前面也介绍过了，安装也很简单：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash
+</code></pre></div><p>完成后<code>重新登录</code>或者执行<code>source ~/.bashrc</code>让环境变量生效，执行<code>nvm --version</code>验证安装情况。</p>
+<h3 id="nodejs">Node.js</h3>
+<p>有了nvm，安装Node.js再简单不过：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">nvm install --lts <span style="color:#75715e"># nvm会自动选择lts版本作为默认版本</span>
+</code></pre></div><p>如果你不是安装LTS版本，要多一个命令：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">nvm install 8.7.0
+nvm use 8.7.0 --default
+</code></pre></div><p>完成后执行<code>node --version</code>验证安装情况。</p>
+<h3 id="appium">Appium</h3>
+<p>到了最磨人的一个步骤了，由于众所周知的原因，npm安装总会遇到一些麻烦事，两个建议，第一个是使用国内源，第二个是使用proxy。我使用阿里的源进行安装，各种报错，不知道是阿里的问题还是遭遇了npm的bug（之前玩耍react的时候也遇到过，很尴尬……）。proxy会舒服些，但是npm似乎会搞很多个TCP连接，以至于我的代理服务器收到了<code>too many connections</code>的奇妙体验，很多次的失败和重试后，终于完成了，安装命令如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># proxy安装</span>
+npm install -g appium --proxy<span style="color:#f92672">=</span>http://yourproxy.com:port
+<span style="color:#75715e"># 淘宝源安装</span>
+npm install -g appium --registry<span style="color:#f92672">=</span>https://registry.npm.taobao.org
+</code></pre></div><p>使用命令<code>appium --version</code>可以验证安装情况。</p>
+<h2 id="总结">总结</h2>
+<ul>
+<li>安装环境总是个让人头疼的问题，我们的测试哥哥折腾了快一周硬是没搞定，出手帮助解决问题，新加机器又要来一遍，糟糕的网络环境更是让一键脑残脚本头疼不已，镜像系统也有概率玩脱。前段时间也是玩了很多docker，想通过docker来做这套环境的直接平移，但是测试不一定用得来，而且还有很多直接对硬件操作的骚操作，我还没怎么研究过如何让docker操作USB端口上的硬件呢。所以，如何能完美平移？这个交给我们的运维小哥了，哈哈！（装完B就跑，真TM刺激）</li>
+<li>这里也用到了一些linux环境下使用proxy的一些常见姿势，命令自带或者接受系统的环境变量，大家可以酌情使用。</li>
+</ul>
+</div>
+
+    
+    
+
+    
+
+    
+
+</main>
+
+        <footer>
+
+            <p class="copyright text-muted">© All rights reserved. Powered by <a href="https://gohugo.io">Hugo</a> and <a href="https://github.com/gsgtzq/minimal">Minimal</a></p>
+
+        </footer>
+       
+    </body>
+
+</html>
+

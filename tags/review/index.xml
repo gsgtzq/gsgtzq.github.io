@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Review on 风舞的 BLOG</title>
+    <link>https://blog.gsgtzq.com/tags/review/</link>
+    <description>Recent content in Review on 风舞的 BLOG</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 10 Jun 2019 18:09:25 +0800</lastBuildDate><atom:link href="https://blog.gsgtzq.com/tags/review/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>App Store新审核指南解读</title>
+      <link>https://blog.gsgtzq.com/post/new-app-store-review-guidelines/</link>
+      <pubDate>Mon, 10 Jun 2019 18:09:25 +0800</pubDate>
+      
+      <guid>https://blog.gsgtzq.com/post/new-app-store-review-guidelines/</guid>
+      <description>前言 WWDC19召开，苹果重磅升级了iOS 13，分离了iPhone OS和iPad OS，为iPad带来了更多独特的功能，同时，苹果也对App Store做出了调整。接下来就来解读一下这次审核指南的改动。以及对游戏行业的一些影响。
+苹果官方于6月3日放出了内容更新，包括7条修改和2条新增。整体来讲，修改条款都直指隐私问题，有国外的评论员认为苹果现在是一家隐私即服务的公司(英文版)。接下来会对每条改动进行解读。
+解读 Guidelines 1.3 and 5.1.4 In order to help keep kids’ data private, apps in the kids category and apps intended for kids cannot include third-party advertising or analytics software and may not transmit data to third parties. This guideline is now enforced for new apps. Existing apps must follow this guideline by September 3, 2019. 这条是针对儿童的，苹果要求针对儿童的应用不得包含广告和数据分析软件，也不能向第三方传递数据，2019年9月3日强制执行。
+Guidelines 4.7 HTML5 games distributed in apps may not provide access to real money gaming, lotteries, or charitable donations, and may not support digital commerce.</description>
+    </item>
+    
+  </channel>
+</rss>

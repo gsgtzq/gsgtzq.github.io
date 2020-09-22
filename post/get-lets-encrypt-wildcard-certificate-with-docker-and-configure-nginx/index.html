@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+         
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>通过Docker获取Let&#39;s Encrpyt通配符证书并配置Nginx</title>
+        
+        <style>
+
+    html body {
+        font-family: 'Raleway', sans-serif;
+        background-color: white;
+    }
+
+    :root {
+        --accent: red;
+        --border-width:  5px ;
+    }
+
+</style>
+
+
+<link rel="stylesheet" href="https://blog.gsgtzq.com/css/main.css">
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway" type="text/css">
+
+
+ <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/solarized-dark.min.css"> 
+
+
+<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+ 
+
+
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/go.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/objectivec.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/python.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/bash.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/nginx.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/json.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/ini.min.js"></script> 
+
+    <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script>$(document).on('click', function() { $('.collapse').collapse('hide'); })</script>
+ <meta name="generator" content="Hugo 0.75.1" />
+        
+        
+
+        
+        
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-102689387-1"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments)};
+          gtag('js', new Date());
+
+          gtag('config', 'UA-102689387-1');
+        </script>
+        
+    </head>
+
+    
+    
+    <script src="https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+    <body>
+         
+        <nav class="navbar navbar-default navbar-fixed-top">
+
+            <div class="container">
+
+                <div class="navbar-header">
+
+                    <a class="navbar-brand visible-xs" href="#">通过Docker获取Let&#39;s Encrpyt通配符证书并配置Nginx</a>
+
+                    <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                </div>
+
+                <div class="collapse navbar-collapse">
+
+                    
+                        <ul class="nav navbar-nav">
+                            
+                                <li><a href="/">Home</a></li>
+                            
+                                <li><a href="/post/">Posts</a></li>
+                            
+                                <li><a href="/tags/">Tags</a></li>
+                            
+                        </ul>
+                    
+
+                    
+                        <ul class="nav navbar-nav navbar-right">
+                            
+                                <li class="navbar-icon"><a href="mailto:gsgtzq@gmail.com"><i class="fa fa-envelope-o"></i></a></li>
+                            
+                                <li class="navbar-icon"><a href="https://github.com/gsgtzq/"><i class="fa fa-github"></i></a></li>
+                            
+                        </ul>
+                    
+
+                </div>
+
+            </div>
+
+        </nav>
+
+
+<main>
+
+    <div class="item">
+
+    
+    
+    
+
+    
+    
+
+    <h4><a href="/post/get-lets-encrypt-wildcard-certificate-with-docker-and-configure-nginx/">通过Docker获取Let&#39;s Encrpyt通配符证书并配置Nginx</a></h4>
+    <h5>2018-04-08T19:16:35&#43;08:00</h5>
+    
+    <a href="https://blog.gsgtzq.com/tags/https"><kbd class="item-tag">https</kbd></a>
+    
+    <a href="https://blog.gsgtzq.com/tags/docker"><kbd class="item-tag">Docker</kbd></a>
+    
+
+</div>
+
+
+    <br> <div class="text-justify"><h2 id="前言">前言</h2>
+<p>开发测试过程中，往往需要测试HTTPS连接是否正常，获取一个SSL证书变得越来越重要，公司的HTTPS证书和域名往往不能直接给到开发用，造成了比较大的困扰。还好有Let&rsquo;s Encrpyt这样一个免费SSL证书获取的机构，如果你有一个自己的域名，那么通过Let&rsquo;s Encrypt来配置HTTPS开发服务器将会变得异常轻松。同样如果自己的小网站想支持HTTPS也可以通过以下方式。</p>
+<h2 id="准备工作">准备工作</h2>
+<p>Let&rsquo;s Encrpyt官方有一个<code>certbot</code>工具用以自动申请证书。我们这里使用docker来运行这个工具，减轻下载安装工具的烦恼，因此我们只需要一台装好了docker的机器即可。</p>
+<h2 id="获取证书">获取证书</h2>
+<h3 id="获取docker镜像">获取docker镜像</h3>
+<p>获取最新的certbot镜像，只需要执行以下命令：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">docker pull certbot/certbot:latest
+</code></pre></div><h3 id="请求证书">请求证书</h3>
+<p>执行以下命令，开始获取证书：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">docker run -it --rm -v /path/to/saved/cert:/etc/letsencrypt certbot/certbot --server https://acme-v02.api.letsencrypt.org/directory -d <span style="color:#e6db74">&#34;*.yourdomain.com&#34;</span> --manual --preferred-challenges dns-01 certonly
+</code></pre></div><p>记得将<code>/path/to/saved/cert</code>和<code>*.yourdomain.com</code>替换为自己相对应的路径和域名哟~</p>
+<p>期间会有一些操作，记录如图：</p>
+<p>输入email作为申请证书的用户记录</p>
+<p><img src="/img/20180408/enter_email.png" alt="img"></p>
+<p>同意Let&rsquo;s Encrypt的用户协议</p>
+<p><img src="/img/20180408/agree_in_order.png" alt="img"></p>
+<p>同意订阅Let&rsquo;s Encrypt的提醒邮件</p>
+<p><img src="/img/20180408/share_email.png" alt="img"></p>
+<p>同意记录当前请求证书的IP</p>
+<p><img src="/img/20180408/logged_ip.png" alt="img"></p>
+<p>增加DNS TXT记录</p>
+<p><img src="/img/20180408/dns_txt_record.png" alt="img"></p>
+<p><code>到这里，先不要急着按回车</code>，打开对应的域名解析服务商，按照最后的提示添加一条<code>_acme-challenge.yourdomain.com</code>的DNS TXT记录，我的域名使用dnspod做解析服务，解析如图：</p>
+<p><img src="/img/20180408/dnspod.png" alt="img"></p>
+<p>完成添加解析记录后，回到刚刚最后一步回车，certbot会自动验证DNS解析是否正确，并且下载证书，见到以下画面，证书也就获取完毕了。</p>
+<p><img src="/img/20180408/congratulations.png" alt="img"></p>
+<p>到此为止，证书全部获取完毕。</p>
+<h2 id="配置nginx">配置nginx</h2>
+<p>接下来到配置nginx环节，我仍然使用docker来启动nginx，本地程序亦可参考。</p>
+<p>配置文件的核心是加入ssl部分的配置，将证书和key分别指向Let&rsquo;s Encrypt的证书和key，添加SSL相关的配置包括<code>协议</code>、<code>支持的算法</code>等，这些可通过<a href="https://mozilla.github.io/server-side-tls/ssl-config-generator/" title="Mozilla SSL Configuration Generator">Mozilla SSL Configuration Generator</a>来辅助编写，我的配置如下。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nginx" data-lang="nginx"><span style="color:#66d9ef">server</span> {
+    <span style="color:#f92672">listen</span> <span style="color:#ae81ff">443</span> <span style="color:#e6db74">ssl</span> <span style="color:#e6db74">http2</span>;
+    <span style="color:#f92672">server_name</span> <span style="color:#e6db74">www.gsgtzq.com</span>;
+    <span style="color:#75715e"># ssl配置部分
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">ssl_certificate</span> <span style="color:#e6db74">/etc/letsencrypt/live/gsgtzq.com/fullchain.pem</span>;
+    <span style="color:#f92672">ssl_certificate_key</span> <span style="color:#e6db74">/etc/letsencrypt/live/gsgtzq.com/privkey.pem</span>;
+    <span style="color:#f92672">ssl_session_timeout</span> <span style="color:#e6db74">1d</span>;
+    <span style="color:#f92672">ssl_session_cache</span> <span style="color:#e6db74">shared:SSL:50m</span>;
+    <span style="color:#f92672">ssl_session_tickets</span> <span style="color:#66d9ef">off</span>;
+    <span style="color:#f92672">ssl_protocols</span> <span style="color:#e6db74">TLSv1.2</span>;
+    <span style="color:#f92672">ssl_ciphers</span> <span style="color:#e6db74">&#39;ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256&#39;</span>;
+    <span style="color:#f92672">ssl_prefer_server_ciphers</span> <span style="color:#66d9ef">on</span>;
+    <span style="color:#f92672">add_header</span> <span style="color:#e6db74">Strict-Transport-Security</span> <span style="color:#e6db74">max-age=15768000</span>;
+    <span style="color:#f92672">ssl_stapling</span> <span style="color:#66d9ef">on</span>;
+    <span style="color:#f92672">ssl_stapling_verify</span> <span style="color:#66d9ef">on</span>;
+    <span style="color:#f92672">ssl_trusted_certificate</span> <span style="color:#e6db74">/etc/letsencrypt/live/gsgtzq.com/chain.pem</span>;
+    <span style="color:#f92672">location</span> <span style="color:#e6db74">/</span> {
+       <span style="color:#f92672">root</span> <span style="color:#e6db74">/usr/share/nginx/blog</span>;
+       <span style="color:#f92672">index</span> <span style="color:#e6db74">index.html</span> <span style="color:#e6db74">index.htm</span>;
+    }
+
+    <span style="color:#f92672">error_page</span> <span style="color:#ae81ff">500</span> <span style="color:#ae81ff">502</span> <span style="color:#ae81ff">503</span> <span style="color:#ae81ff">504</span> <span style="color:#e6db74">/50x.html</span>;
+    <span style="color:#f92672">location</span> = <span style="color:#e6db74">/50x.html</span> {
+        <span style="color:#f92672">root</span> <span style="color:#e6db74">html</span>;
+    }
+}
+
+<span style="color:#66d9ef">server</span> {
+    <span style="color:#f92672">listen</span> <span style="color:#ae81ff">80</span>;
+    <span style="color:#f92672">server_name</span> <span style="color:#e6db74">www.gsgtzq.com</span>;
+    <span style="color:#f92672">return</span> <span style="color:#ae81ff">301</span> <span style="color:#e6db74">https://</span>$host:$request_uri;
+}
+</code></pre></div><h2 id="后记">后记</h2>
+<ul>
+<li>原本打算使用Let&rsquo;s Encrypt + 自己的服务器 + 自己的域名 + docker 部署静态blog，结果因为Let&rsquo;s Encrypt的证书安装在海外的服务器会在国内访问不通，国外或国内的服务器网络正常。简单查证后发现TLS握手就会超时，原因不详正在研究中。</li>
+</ul>
+<hr>
+<ul>
+<li>2018-04-08 22:45 更新，回家后发现家中网络可正常运转，在公司时连自己手机都尝试过不行，不明真相的吃瓜群众表示困惑不解，难道是GFW搞的鬼？</li>
+</ul>
+</div>
+
+    
+    
+
+    
+
+        <h4 class="page-header">Related</h4>
+
+         <div class="item">
+
+    
+    
+    
+
+    
+    
+
+    <h4><a href="/post/docker-storage-layer-and-security/">浅谈 Docker 存储层与 Docker 的安全</a></h4>
+    <h5>2020-09-21T20:34:39&#43;08:00</h5>
+    
+    <a href="https://blog.gsgtzq.com/tags/docker"><kbd class="item-tag">Docker</kbd></a>
+    
+    <a href="https://blog.gsgtzq.com/tags/%E5%AE%89%E5%85%A8"><kbd class="item-tag">安全</kbd></a>
+    
+    <a href="https://blog.gsgtzq.com/tags/security"><kbd class="item-tag">Security</kbd></a>
+    
+
+</div>
+ 
+
+    
+
+    
+
+</main>
+
+        <footer>
+
+            <p class="copyright text-muted">© All rights reserved. Powered by <a href="https://gohugo.io">Hugo</a> and <a href="https://github.com/gsgtzq/minimal">Minimal</a></p>
+
+        </footer>
+       
+    </body>
+
+</html>
+

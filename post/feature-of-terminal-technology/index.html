@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+         
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>浅谈终端技术的未来</title>
+        
+        <style>
+
+    html body {
+        font-family: 'Raleway', sans-serif;
+        background-color: white;
+    }
+
+    :root {
+        --accent: red;
+        --border-width:  5px ;
+    }
+
+</style>
+
+
+<link rel="stylesheet" href="https://blog.gsgtzq.com/css/main.css">
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway" type="text/css">
+
+
+ <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/solarized-dark.min.css"> 
+
+
+<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+ 
+
+
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/go.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/objectivec.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/python.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/bash.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/nginx.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/json.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/ini.min.js"></script> 
+
+    <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script>$(document).on('click', function() { $('.collapse').collapse('hide'); })</script>
+ <meta name="generator" content="Hugo 0.75.1" />
+        
+        
+
+        
+        
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-102689387-1"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments)};
+          gtag('js', new Date());
+
+          gtag('config', 'UA-102689387-1');
+        </script>
+        
+    </head>
+
+    
+    
+    <script src="https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+    <body>
+         
+        <nav class="navbar navbar-default navbar-fixed-top">
+
+            <div class="container">
+
+                <div class="navbar-header">
+
+                    <a class="navbar-brand visible-xs" href="#">浅谈终端技术的未来</a>
+
+                    <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                </div>
+
+                <div class="collapse navbar-collapse">
+
+                    
+                        <ul class="nav navbar-nav">
+                            
+                                <li><a href="/">Home</a></li>
+                            
+                                <li><a href="/post/">Posts</a></li>
+                            
+                                <li><a href="/tags/">Tags</a></li>
+                            
+                        </ul>
+                    
+
+                    
+                        <ul class="nav navbar-nav navbar-right">
+                            
+                                <li class="navbar-icon"><a href="mailto:gsgtzq@gmail.com"><i class="fa fa-envelope-o"></i></a></li>
+                            
+                                <li class="navbar-icon"><a href="https://github.com/gsgtzq/"><i class="fa fa-github"></i></a></li>
+                            
+                        </ul>
+                    
+
+                </div>
+
+            </div>
+
+        </nav>
+
+
+<main>
+
+    <div class="item">
+
+    
+    
+    
+
+    
+    
+
+    <h4><a href="/post/feature-of-terminal-technology/">浅谈终端技术的未来</a></h4>
+    <h5>2019-07-10T09:41:26&#43;08:00</h5>
+    
+    <a href="https://blog.gsgtzq.com/tags/%E5%89%8D%E7%AB%AF"><kbd class="item-tag">前端</kbd></a>
+    
+    <a href="https://blog.gsgtzq.com/tags/%E5%AE%A2%E6%88%B7%E7%AB%AF"><kbd class="item-tag">客户端</kbd></a>
+    
+
+</div>
+
+
+    <br> <div class="text-justify"><h2 id="前言">前言</h2>
+<p>终端，最初的定义是最简单的个人计算机，而现在的终端，早已不是单台单一的计算机，交互方式也不再停留于键盘，鼠标，显示器。但是无论怎么变化，终端始终都是人与机器交互的方式。</p>
+<p>终端技术演进到今日，演变出了无数种交互方式，随之的技术方案也是千变万化，以下就来聊一聊终端技术的过去、未来、演变的过程，以及最近的一些思考和个人见解。</p>
+<h2 id="一切始于交互">一切始于交互</h2>
+<p><strong><!-- raw HTML omitted -->终端终究是人与计算机的虚拟世界交互的一种方式。<!-- raw HTML omitted --></strong></p>
+<p>最早之时，人们使用键盘做为输入设备，使用文字命令模式与计算机进行交互。</p>
+<p>20 世纪 90 年代开始，以 Windows、苹果操作系统为首的图形界面时代来临，GUI 对普通用户的极大有好性大大降低了普通用户使用计算机的门槛。</p>
+<p>互联网时代，浏览器成为了获取信息的主要途径，从早期几乎如同文章一样的网页，到今日纷繁复杂的 Web Application。直到今日，网页这种形式承担了大量普通用户的交互需求。</p>
+<p>随着移动设备的普及，硬件成本、带宽成本一再降低，从纯原生 App 时代，到如今小程序等各种跨平台兼容性解决方案，移动端也演变出了自己的一套章法。</p>
+<p>回头再看如今的 PC，也随着移动端的蓬勃发展，演变出了不少新鲜玩意儿：Electron、Desktop PWA，也在 PC 领域占有了一席之地。</p>
+<p>但这些说到头，这些技术都是人与数字世界的一种方式。简单些概括就是：<strong>人-&gt;硬件输入设备-&gt;系统平台-&gt;数字世界</strong>。</p>
+<p><img src="/img/20190710/abstract.png" alt="img"></p>
+<h2 id="不完美的交互体验">不完美的交互体验</h2>
+<p>直到今日，这些交互方式以及解决方案数不胜数，但都有自己不尽完美的地方，有硬件设备的变迁引入的新的交互问题，也有平台争端引发的麻烦。硬件变迁自然不用多说，从最古老的交互方式键盘，到如今的手机屏幕、VR 设备等，变化多样且复杂。而我们主要來谈一谈主流平台之间的一些争端。</p>
+<h3 id="绕不过的平台之争">绕不过的平台之争</h3>
+<h4 id="windows-与-mac">Windows 与 Mac</h4>
+<p>“上古”时代，Windows 和苹果操作系统占据了 PC 桌面市场绝大部分的份额，两家的 GUI 类库各有所不同。在 Windows 下，是以 C++语言为基础的 MFC，而苹果操作系统则是以 Objective-C 为基础构建的 Cocoa。苹果操作系统的操作体验，在很长一段时间都是压过 Windows 的，但是市场占有率远不及 Windows。随时代变化，MFC 出现了越来越多的问题（开发者的痛苦，效果不够与时俱进），因此在这之后，微软还为 Windows 先后开发了 WPF 和 UWP，效果已经与 Cocoa 不相上下。</p>
+<p>**桌面时代两家的争端，以及早期跨平台技术的缺失，导致桌面平台的主流做法是独占式开发，仅适配某一个平台。**这也直接导致了大量软件没法在不同的操作系统中通用。微软在桌面平台对开发者更友好的做法，也是微软统治桌面市场的一大原因。</p>
+<p>后来在Java JWT，Qt等技术带队之下，桌面端也出现了一些跨平台方案，但这些方案更多会在嵌入式平台兼容上有所考虑，在那个时代，普通桌面应用都比较少。</p>
+<h4 id="浏览器的标准">浏览器的标准</h4>
+<p>互联网时代，浏览器占据了用户大部分的交互时间，但争端仍在继续。微软凭借 PC 时代的优势捆绑 IE，一举拿下大部分浏览器市场，垄断带来的最大的问题就是标准问题。VBScript 与 JavaScript，不一样的盒子模型，旧版本浏览器表现不一致，各浏览器缠上新特性实现进度不同等问题一直都摆在 Web 开发者的面前。<strong>但与纯桌面时代不同的是，Web 开发的跨平台兼容性要求一直被放在一个非常高的标准线上</strong>，这也是早期的前端工程师的一项重要技能。</p>
+<h4 id="android-与-ios">Android 与 iOS</h4>
+<p>移动互联网时代，Android 与 iOS 很快席卷了市场。苹果将 Cocoa 进行触摸操作改进，编写大量组件后形成了 Cocoa Touch。Android 则是有 Java 语言和自己的标准。很长一段时间两端原生 App 的开发如火如荼。两家不仅在技术实现上完全不同，在用户交互上也有非常多不同的理解，早期 iOS 的体验上很大程度上远优于 Android ，Android 早期也没有成型的交互规范，<strong>因此 UI 设计很多都直接使用 iOS 的设计规范，至于 Android 就照 iOS 的来吧</strong>。这对 Android 开发者来讲，绝不是一个好消息，早期的 Android 开发者不知写了多少个与仿 iOS 效果的“轮子”。谷歌后来推出了 Material Design，并在 Android 中主推，但并没有特别流行起来，而在这之前，很多在双端平台崛起的公司已然形成了自己一套跨平台的规范，双端交互上高度趋同，Material Design 在规范层面来的有些晚。</p>
+<h4 id="跨平台技术">跨平台技术</h4>
+<p>随着时间变化，一套逻辑写多遍，开发效率不够高等问题受到开发者的注意。为了节省人力，加快开发节奏，开发者们想起了浏览器时代一处编写，到处运行的特点，跨平台技术开始迅速绽放。有直接利用浏览器能力，基于WebView的解决方案PhoneGAP、Cordova等，也有通过桥接方式映射至Native控件的React Native、WEEX等。还有在设备性能不断拔高，移动游戏引擎的开花结果的情况下，一套全新的思路：直接基于OpenGL ES等渲染引擎进行组件搭建，这包括了游戏引擎Unity、Cocos，应用开发解决方案Flutter等。</p>
+<p>受移动端跨平台方案的启发，<strong>桌面应用也发生了产生了诸如Electron，React Native Desktop之类的解决方案</strong>，也是为桌面开发注入了有趣的技术。</p>
+<p>在中国，还有一些独具特色的“平台”。随着超级App越来越占据了用户大部分的屏幕时间，平台一词从原来的操作系统，逐渐变到了如今的超级App，以小程序为首的平台之争又一次展开。各家基于以上的跨屏台技术，开放了自家超级App的可编程能力，形成了自己的平台。他们大多都是基于JavaScript引擎来实现，所以诞生了一系列框架，来实现这种意义上的跨平台，如：Taro、Chameleon、uni-app等。<strong>他们大多是利用JavaScript的语法转换和现成的Web框架React、Vue等语法特性来达到跨平台的目的。</strong></p>
+<h4 id="小结">小结</h4>
+<p>以一张图来展现上面这些平台技术的实现方式：</p>
+<p><img src="/img/20190710/platform-implementation.png" alt="img"></p>
+<p>总体来看，这些技术方案终究都有他们不完美的地方。</p>
+<ul>
+<li>开发门槛高。</li>
+<li>开发漂亮界面的困难大，交互舒适度低。</li>
+<li>并不是一出生就为复杂交互而来。</li>
+<li>很不友好的硬件体验。</li>
+<li>尴尬的性能缺陷。</li>
+</ul>
+<p>软件工程没有“银弹”，平台无论怎么争，始终没有绕过那条公式，我讲现如今流行的一些交互方案总结到了一张图中，也充分证明了，大家其实在最终目的上的追求，是一致的。</p>
+<p><strong><!-- raw HTML omitted -->在终端开发领域，在合适的场景利用合适的技术适当的解决问题就显得尤为重要，做好了事半功倍，做不好事倍功半。<!-- raw HTML omitted --></strong></p>
+<h2 id="终端技术的价值三板斧">终端技术的价值三板斧</h2>
+<p><strong><!-- raw HTML omitted -->为什么会有终端技术，终端技术的价值究竟几何？<!-- raw HTML omitted --></strong></p>
+<h4 id="效率">效率</h4>
+<p>终端技术对用户直接效率影响是巨大的，效率问题直接衔接在用户与硬件交互设备之间。</p>
+<ul>
+<li>一个好的界面，可以提升用户的专注度。</li>
+<li>原本要做几个操作，被简化到了1-2个，可以提升交互的便利性。</li>
+<li>重点突出，操作逻辑清晰，可以提升交互和思考的逻辑性。</li>
+</ul>
+<p>即便是开发者喜欢用的命令行，其实也有效率的原因在：</p>
+<ul>
+<li>开发者喜欢与计算机有一问一答式的交互方式。</li>
+<li>开发者跳跃度高，专用工具往往是在某个领域先进，如Adobe全家桶。但很多开发者混入了各种领域的零散诉求，终端程序完成速度更快，多领域工具混合使用更不在话下。</li>
+</ul>
+<p>所以我认为，提升交互效率，占据了终端技术价值的很大一部分。</p>
+<h4 id="性能">性能</h4>
+<p>效率之下，自然就是各种终端技术的性能了，等待永远都不会让人舒适。性能更多的像是再谈论终端技术与机器之间的问题。无论是语言层面的优化，还是实际编码时的时间复杂度考虑，<strong><!-- raw HTML omitted -->终端技术总会在缩短执行时间上付出很多努力，来让程序变得更“快”。<!-- raw HTML omitted --></strong></p>
+<h4 id="体验">体验</h4>
+<ul>
+<li>漂亮的网页，能给浏览他的人带来很大的舒适度。</li>
+<li>游戏中华丽的特效总是那么引人入胜，音乐渲染恰到好处。</li>
+<li>无障碍访问技术让残障人士也有机会接触这个虚拟世界。</li>
+</ul>
+<p>这些体验上的舒适度，同样是终端技术带来的价值。今日越来越多的技术融入到了终端交互当中，实时音视频，人工智能等，也有更多的交互方式不断出现，体验终究时终端技术绕不过的话题。</p>
+<h2 id="未来即是在-x-驱动下的交互">未来即是在 X 驱动下的交互</h2>
+<p>终端交互变化的过程，其实是真实感官与数字世界交互上契合度变化的过程。终端技术始终致力于这一目标，尽可能表现出数据的真实性，让数字世界的可操作性向着越来越简单的方向靠拢。不同场景之下，人们对可操作性的的诉求也有所不同，所以我将终端技术的未来概括为了下面这些。</p>
+<h4 id="展示类数据文字表格图片视频等">展示类数据（文字、表格、图片、视频等）</h4>
+<p>展示类数据，是我们使用终端交互时恒古不变的一个诉求，我们总是希望在交互的设备能给我们一个答案，无论是冰冷的数字，还是让人感动的图片视频。终端技术的未来将会继续在这一类诉求的驱动之下，不断改进展现的方式，提升在不同场景之下的结果和效果，提现终端技术的价值。</p>
+<h4 id="编辑类数据">编辑类数据</h4>
+<p>说完了输出总要谈一下与之相对应的输入，文字编辑、表格编辑、图片编辑、视频编辑等渗透在各个领域，每一个领域对于这样的需求都不尽相同，例如某些领域对视频编辑有大量需求，甚至直接依靠视频编辑+X形成产业链。即时编辑的效果大多要在终端完成，这样就对终端技术的需求无异是巨大和严苛的。</p>
+<h4 id="感官视觉听觉等">感官（视觉、听觉等）</h4>
+<p>电子产品的音视频体验是一个非常宽泛的领域。VR、AR等天生就是一种较强感官效果的交互方式，终端技术恰巧擅长的就是通过交互方式完成所有的操作，强感官的交互方式意味着一种全新的环境，交互也更加侧重流畅度、清晰度、特效的爽快感等体验上，这在娱乐行业应用将会走的更加前卫，对终端技术的挑战将会是一个更新的领域。</p>
+<h4 id="复杂环境无障碍特定操作环境iot-等">复杂环境（无障碍、特定操作环境、IoT 等）</h4>
+<p>复杂环境之下，终端技术的价值仍有非常大的发挥空间。<a href="https://www.w3.org/Translations/WCAG20-zh/">无障碍化访问</a>，资源极其有限的IoT环境等，这些领域都在帮助一些特殊情况或特殊领域与虚拟世界接触的办法，最终映射到人，都将是终端技术要去解决的问题。</p>
+<h2 id="总结">总结</h2>
+<p>终端技术终究是一种人与某种数据直接交互的方式，种类多，环境杂。依托于计算机图形学，音频处理等方面，有自己的一套价值。未来将会有更多的复杂交互场景，复杂的交互方式等待着终端技术从中解决问题。构建一个高效舒适的交互环境是终端技术一直不变的目标。每一个做着前端，客户端等终端领域开发工作的人都应在所在领域不断前进，利用合适的技术来提升交互体验。</p>
+</div>
+
+    
+    
+
+    
+
+    
+
+</main>
+
+        <footer>
+
+            <p class="copyright text-muted">© All rights reserved. Powered by <a href="https://gohugo.io">Hugo</a> and <a href="https://github.com/gsgtzq/minimal">Minimal</a></p>
+
+        </footer>
+       
+    </body>
+
+</html>
+

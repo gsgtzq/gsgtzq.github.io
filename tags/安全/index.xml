@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>安全 on 风舞的 BLOG</title>
+    <link>https://blog.gsgtzq.com/tags/%E5%AE%89%E5%85%A8/</link>
+    <description>Recent content in 安全 on 风舞的 BLOG</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 21 Sep 2020 20:34:39 +0800</lastBuildDate><atom:link href="https://blog.gsgtzq.com/tags/%E5%AE%89%E5%85%A8/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>浅谈 Docker 存储层与 Docker 的安全</title>
+      <link>https://blog.gsgtzq.com/post/docker-storage-layer-and-security/</link>
+      <pubDate>Mon, 21 Sep 2020 20:34:39 +0800</pubDate>
+      
+      <guid>https://blog.gsgtzq.com/post/docker-storage-layer-and-security/</guid>
+      <description>前言 前段时间，团队内的小伙伴遇到了一个神奇的问题，最终查证是 Docker Layers 文件权限从外部被修改，最终导致了 Docker 内部写文件出现问题，我们使用 Docker 的方式仍然比较原始，只是用 Docker 隔离一下执行环境而已。但由此引发我进一步探索 Docker 存储系统的好奇心。
+存储层机制探索 Docker 官方文档上面清晰记载了 Docker 存储机制的介绍。可以通过docker info命令查看当前 Docker 使用的存储层是为哪一种。官方文档也清晰介绍了再不同的主流 Linux 发行版中所使用的 Storage Driver。这里简单罗列所支持的后端文件系统，供大家探索。
+   Storage Driver Supported backing filesystems     overlay2, overlay xfs with ftype=1, ext4   aufs xfs, ext4   devicemapper direct-lvm   btrfs btrfs   zfs zfs   vfs any filesystem    其中 vfs 使用依赖于基础文件系统，意味着他性能更差，可能无法支持写时复制，还会浪费大量存储空间，也可能会因为文件系统和内核升级带来一些不必要的麻烦，仅用作于测试。</description>
+    </item>
+    
+  </channel>
+</rss>

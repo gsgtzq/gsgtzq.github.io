@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on 风舞的 BLOG</title>
+    <link>https://blog.gsgtzq.com/post/</link>
+    <description>Recent content in Posts on 风舞的 BLOG</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 21 Sep 2020 20:34:39 +0800</lastBuildDate><atom:link href="https://blog.gsgtzq.com/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>浅谈 Docker 存储层与 Docker 的安全</title>
+      <link>https://blog.gsgtzq.com/post/docker-storage-layer-and-security/</link>
+      <pubDate>Mon, 21 Sep 2020 20:34:39 +0800</pubDate>
+      
+      <guid>https://blog.gsgtzq.com/post/docker-storage-layer-and-security/</guid>
+      <description>前言 前段时间，团队内的小伙伴遇到了一个神奇的问题，最终查证是 Docker Layers 文件权限从外部被修改，最终导致了 Docker 内部写文件出现问题，我们使用 Docker 的方式仍然比较原始，只是用 Docker 隔离一下执行环境而已。但由此引发我进一步探索 Docker 存储系统的好奇心。
+存储层机制探索 Docker 官方文档上面清晰记载了 Docker 存储机制的介绍。可以通过docker info命令查看当前 Docker 使用的存储层是为哪一种。官方文档也清晰介绍了再不同的主流 Linux 发行版中所使用的 Storage Driver。这里简单罗列所支持的后端文件系统，供大家探索。
+   Storage Driver Supported backing filesystems     overlay2, overlay xfs with ftype=1, ext4   aufs xfs, ext4   devicemapper direct-lvm   btrfs btrfs   zfs zfs   vfs any filesystem    其中 vfs 使用依赖于基础文件系统，意味着他性能更差，可能无法支持写时复制，还会浪费大量存储空间，也可能会因为文件系统和内核升级带来一些不必要的麻烦，仅用作于测试。</description>
+    </item>
+    
+    <item>
+      <title>设置git代理的正确姿势</title>
+      <link>https://blog.gsgtzq.com/post/how-to-set-git-over-proxy/</link>
+      <pubDate>Mon, 09 Mar 2020 22:08:50 +0800</pubDate>
+      
+      <guid>https://blog.gsgtzq.com/post/how-to-set-git-over-proxy/</guid>
+      <description>前言 众所周知，由于国内的网络环境限制，github时不时会出现连接困难的情况，web访问还好，大家手段还是比较多的，但是git可能会比较头疼，有天我推送代码到github时，SSH卡得我一头包，遂折腾了一波git代理，整理下来。
+物料准备  一个访问git流畅的代理 知道自己的代理的本地协议，通常为socks5或http 知道自己访问的git服务器使用了哪个协议，可能是这三种：git，ssh，https  设置和取消 根据要访问git服务器的协议，选择对应的设置，同时注意更换自己代理的本地协议和端口。
+HTTP/HTTPS协议 可以使用以下命令设置全局代理。
+git config --global https.proxy http://127.0.0.1:1080 git config --global https.proxy http://127.0.0.1:1080 也可以通过只设置对应域名的http代理，减少来来回回的配置次数
+git config --global http.https://github.com.proxy http://127.0.0.1:1080 git config --global https.https://github.com.proxy http://127.0.0.1:1080 也可编辑~/.gitconfig文件，加入如下设置
+[http] proxy = http://127.0.0.1:1080 [https] proxy = http://127.0.0.1:1080 可以使用以下命令或删除配置文件中对应行，删除代理
+git config --global --unset https.proxy git config --global --unset https.proxy SSH协议 当使用SSH协议时，会通过SSH客户端进行通信，所以要设置SSH客户端的代理，通过更改~/.ssh/config文件，增加配置可设置SSH代理。
+# socks5协议 Host github.com ProxyCommand nc -X 5 -x 127.0.0.1:1080 %h %p # http协议 Host github.</description>
+    </item>
+    
+    <item>
+      <title>浅谈终端技术的未来</title>
+      <link>https://blog.gsgtzq.com/post/feature-of-terminal-technology/</link>
+      <pubDate>Wed, 10 Jul 2019 09:41:26 +0800</pubDate>
+      
+      <guid>https://blog.gsgtzq.com/post/feature-of-terminal-technology/</guid>
+      <description>前言 终端，最初的定义是最简单的个人计算机，而现在的终端，早已不是单台单一的计算机，交互方式也不再停留于键盘，鼠标，显示器。但是无论怎么变化，终端始终都是人与机器交互的方式。
+终端技术演进到今日，演变出了无数种交互方式，随之的技术方案也是千变万化，以下就来聊一聊终端技术的过去、未来、演变的过程，以及最近的一些思考和个人见解。
+一切始于交互 终端终究是人与计算机的虚拟世界交互的一种方式。
+最早之时，人们使用键盘做为输入设备，使用文字命令模式与计算机进行交互。
+20 世纪 90 年代开始，以 Windows、苹果操作系统为首的图形界面时代来临，GUI 对普通用户的极大有好性大大降低了普通用户使用计算机的门槛。
+互联网时代，浏览器成为了获取信息的主要途径，从早期几乎如同文章一样的网页，到今日纷繁复杂的 Web Application。直到今日，网页这种形式承担了大量普通用户的交互需求。
+随着移动设备的普及，硬件成本、带宽成本一再降低，从纯原生 App 时代，到如今小程序等各种跨平台兼容性解决方案，移动端也演变出了自己的一套章法。
+回头再看如今的 PC，也随着移动端的蓬勃发展，演变出了不少新鲜玩意儿：Electron、Desktop PWA，也在 PC 领域占有了一席之地。
+但这些说到头，这些技术都是人与数字世界的一种方式。简单些概括就是：人-&amp;gt;硬件输入设备-&amp;gt;系统平台-&amp;gt;数字世界。
+不完美的交互体验 直到今日，这些交互方式以及解决方案数不胜数，但都有自己不尽完美的地方，有硬件设备的变迁引入的新的交互问题，也有平台争端引发的麻烦。硬件变迁自然不用多说，从最古老的交互方式键盘，到如今的手机屏幕、VR 设备等，变化多样且复杂。而我们主要來谈一谈主流平台之间的一些争端。
+绕不过的平台之争 Windows 与 Mac “上古”时代，Windows 和苹果操作系统占据了 PC 桌面市场绝大部分的份额，两家的 GUI 类库各有所不同。在 Windows 下，是以 C++语言为基础的 MFC，而苹果操作系统则是以 Objective-C 为基础构建的 Cocoa。苹果操作系统的操作体验，在很长一段时间都是压过 Windows 的，但是市场占有率远不及 Windows。随时代变化，MFC 出现了越来越多的问题（开发者的痛苦，效果不够与时俱进），因此在这之后，微软还为 Windows 先后开发了 WPF 和 UWP，效果已经与 Cocoa 不相上下。
+**桌面时代两家的争端，以及早期跨平台技术的缺失，导致桌面平台的主流做法是独占式开发，仅适配某一个平台。**这也直接导致了大量软件没法在不同的操作系统中通用。微软在桌面平台对开发者更友好的做法，也是微软统治桌面市场的一大原因。
+后来在Java JWT，Qt等技术带队之下，桌面端也出现了一些跨平台方案，但这些方案更多会在嵌入式平台兼容上有所考虑，在那个时代，普通桌面应用都比较少。
+浏览器的标准 互联网时代，浏览器占据了用户大部分的交互时间，但争端仍在继续。微软凭借 PC 时代的优势捆绑 IE，一举拿下大部分浏览器市场，垄断带来的最大的问题就是标准问题。VBScript 与 JavaScript，不一样的盒子模型，旧版本浏览器表现不一致，各浏览器缠上新特性实现进度不同等问题一直都摆在 Web 开发者的面前。但与纯桌面时代不同的是，Web 开发的跨平台兼容性要求一直被放在一个非常高的标准线上，这也是早期的前端工程师的一项重要技能。
+Android 与 iOS 移动互联网时代，Android 与 iOS 很快席卷了市场。苹果将 Cocoa 进行触摸操作改进，编写大量组件后形成了 Cocoa Touch。Android 则是有 Java 语言和自己的标准。很长一段时间两端原生 App 的开发如火如荼。两家不仅在技术实现上完全不同，在用户交互上也有非常多不同的理解，早期 iOS 的体验上很大程度上远优于 Android ，Android 早期也没有成型的交互规范，因此 UI 设计很多都直接使用 iOS 的设计规范，至于 Android 就照 iOS 的来吧。这对 Android 开发者来讲，绝不是一个好消息，早期的 Android 开发者不知写了多少个与仿 iOS 效果的“轮子”。谷歌后来推出了 Material Design，并在 Android 中主推，但并没有特别流行起来，而在这之前，很多在双端平台崛起的公司已然形成了自己一套跨平台的规范，双端交互上高度趋同，Material Design 在规范层面来的有些晚。</description>
+    </item>
+    
+    <item>
+      <title>App Store新审核指南解读</title>
+      <link>https://blog.gsgtzq.com/post/new-app-store-review-guidelines/</link>
+      <pubDate>Mon, 10 Jun 2019 18:09:25 +0800</pubDate>
+      
+      <guid>https://blog.gsgtzq.com/post/new-app-store-review-guidelines/</guid>
+      <description>前言 WWDC19召开，苹果重磅升级了iOS 13，分离了iPhone OS和iPad OS，为iPad带来了更多独特的功能，同时，苹果也对App Store做出了调整。接下来就来解读一下这次审核指南的改动。以及对游戏行业的一些影响。
+苹果官方于6月3日放出了内容更新，包括7条修改和2条新增。整体来讲，修改条款都直指隐私问题，有国外的评论员认为苹果现在是一家隐私即服务的公司(英文版)。接下来会对每条改动进行解读。
+解读 Guidelines 1.3 and 5.1.4 In order to help keep kids’ data private, apps in the kids category and apps intended for kids cannot include third-party advertising or analytics software and may not transmit data to third parties. This guideline is now enforced for new apps. Existing apps must follow this guideline by September 3, 2019. 这条是针对儿童的，苹果要求针对儿童的应用不得包含广告和数据分析软件，也不能向第三方传递数据，2019年9月3日强制执行。
+Guidelines 4.7 HTML5 games distributed in apps may not provide access to real money gaming, lotteries, or charitable donations, and may not support digital commerce.</description>
+    </item>
+    
+    <item>
+      <title>用Elasticsearch来检索元数据</title>
+      <link>https://blog.gsgtzq.com/post/search-meta-data-with-elasticsearch/</link>
+      <pubDate>Thu, 26 Apr 2018 18:42:10 +0800</pubDate>
+      
+      <guid>https://blog.gsgtzq.com/post/search-meta-data-with-elasticsearch/</guid>
+      <description>近期整理公司所有的数据库元数据，需要大家坐下来一起看数据库字段是否合规，对着 Excel 表格着实看着蛋疼。心想借 ES 的全文检索之手，用 React 写个小工具边查边找问题，岂不美哉？二话不说着手开做。
+Elasticsearch 的 ik 分词插件 ES 自带的分词插件略不好用，对中文不友好也不太符合中国人民的习惯。果断安装 ES 出名的中文分词器elasticsearch-analysis-ik。
+安装 插件官方推荐使用 elasticsearch-plugin install 命令进行安装，经个人测试，会出问题，可能跟我 ES 的运行环境是 docker 有关，配置文件被安装去了/etc/elasticsearch/config 目录下，而 docker 的 ES 启动时并不会鸟这个目录下的文件，之后就各种找不到文件。
+我选择了直接下载 zip 包并在 plugins 目录下解压的方式，完美运行。
+ 从 github 下载对应 ES 版本的 ik 分词插件 zip 包。 在 ES 所在目录的 plugins 目录下解压，删除 zip 压缩包。 重启 ES  测试 ES 的整体 API 风格全部是 RESTFul，因此非常容易测试，只需要一个简单的 CURL POST 即可解决问题。
+curl -X POST -H &amp;#39;Content-type: application/json&amp;#39; -d &amp;#39;{ &amp;#34;text&amp;#34;: &amp;#34;中华人民共和国国歌&amp;#34;, &amp;#34;analyzer&amp;#34;: &amp;#34;ik_max_word&amp;#34; }&amp;#39; &amp;#39;http://localhost:9200/_analyze?</description>
+    </item>
+    
+    <item>
+      <title>通过Docker获取Let&#39;s Encrpyt通配符证书并配置Nginx</title>
+      <link>https://blog.gsgtzq.com/post/get-lets-encrypt-wildcard-certificate-with-docker-and-configure-nginx/</link>
+      <pubDate>Sun, 08 Apr 2018 19:16:35 +0800</pubDate>
+      
+      <guid>https://blog.gsgtzq.com/post/get-lets-encrypt-wildcard-certificate-with-docker-and-configure-nginx/</guid>
+      <description>前言 开发测试过程中，往往需要测试HTTPS连接是否正常，获取一个SSL证书变得越来越重要，公司的HTTPS证书和域名往往不能直接给到开发用，造成了比较大的困扰。还好有Let&amp;rsquo;s Encrpyt这样一个免费SSL证书获取的机构，如果你有一个自己的域名，那么通过Let&amp;rsquo;s Encrypt来配置HTTPS开发服务器将会变得异常轻松。同样如果自己的小网站想支持HTTPS也可以通过以下方式。
+准备工作 Let&amp;rsquo;s Encrpyt官方有一个certbot工具用以自动申请证书。我们这里使用docker来运行这个工具，减轻下载安装工具的烦恼，因此我们只需要一台装好了docker的机器即可。
+获取证书 获取docker镜像 获取最新的certbot镜像，只需要执行以下命令：
+docker pull certbot/certbot:latest 请求证书 执行以下命令，开始获取证书：
+docker run -it --rm -v /path/to/saved/cert:/etc/letsencrypt certbot/certbot --server https://acme-v02.api.letsencrypt.org/directory -d &amp;#34;*.yourdomain.com&amp;#34; --manual --preferred-challenges dns-01 certonly 记得将/path/to/saved/cert和*.yourdomain.com替换为自己相对应的路径和域名哟~
+期间会有一些操作，记录如图：
+输入email作为申请证书的用户记录
+同意Let&amp;rsquo;s Encrypt的用户协议
+同意订阅Let&amp;rsquo;s Encrypt的提醒邮件
+同意记录当前请求证书的IP
+增加DNS TXT记录
+到这里，先不要急着按回车，打开对应的域名解析服务商，按照最后的提示添加一条_acme-challenge.yourdomain.com的DNS TXT记录，我的域名使用dnspod做解析服务，解析如图：
+完成添加解析记录后，回到刚刚最后一步回车，certbot会自动验证DNS解析是否正确，并且下载证书，见到以下画面，证书也就获取完毕了。
+到此为止，证书全部获取完毕。
+配置nginx 接下来到配置nginx环节，我仍然使用docker来启动nginx，本地程序亦可参考。
+配置文件的核心是加入ssl部分的配置，将证书和key分别指向Let&amp;rsquo;s Encrypt的证书和key，添加SSL相关的配置包括协议、支持的算法等，这些可通过Mozilla SSL Configuration Generator来辅助编写，我的配置如下。
+server { listen 443 ssl http2; server_name www.gsgtzq.com; # ssl配置部分  ssl_certificate /etc/letsencrypt/live/gsgtzq.com/fullchain.pem; ssl_certificate_key /etc/letsencrypt/live/gsgtzq.com/privkey.pem; ssl_session_timeout 1d; ssl_session_cache shared:SSL:50m; ssl_session_tickets off; ssl_protocols TLSv1.</description>
+    </item>
+    
+    <item>
+      <title>CentOS 7 安装自动化测试环境排坑指南</title>
+      <link>https://blog.gsgtzq.com/post/install-auto-test-environment-on-centos-7/</link>
+      <pubDate>Thu, 19 Oct 2017 16:07:24 +0800</pubDate>
+      
+      <guid>https://blog.gsgtzq.com/post/install-auto-test-environment-on-centos-7/</guid>
+      <description>前景提要 公司测试部门新加两台CentOS 7作为自己Android自动化测试系统的控制机，安装过程排了不少坑。既已踩坑，写下这些血和泪帮助后人。
+环境介绍 整个自动化测试用到的环境有：
+   名称 版本号 前置依赖     CentOS 7.4.1708 无   pyenv 1.1.5 无   Python 2.7.14 pyenv   OpenCV 3.3.0 无   opencv-python 3.3.0.10 python、opencv   JDK 8u144 无   Android SDK platform-tools 26.0.1 无   nvm 0.33.5 无   Node.js 6.7.14(LTS) nvm   Appium 1.7.1 Node.js、JDK    这里要简单介绍下几个跟本身测试控制机无关的一些东西：
+ pyenv是我在CentOS甚至所有RedHat系上使用Python的一个习惯。因为RedHat系的yum包管理工具使用python编写，所以他们都一定自带某个版本的Python，CentOS自己的软件仓库版本普遍偏低，所以为了使用新版Python而不与系统的Python起冲突。才使用pyenv。 nvm可以管理多版本Node.</description>
+    </item>
+    
+    <item>
+      <title>使用Docker来运行Wordpress</title>
+      <link>https://blog.gsgtzq.com/post/running-wordpress-with-docker/</link>
+      <pubDate>Mon, 17 Jul 2017 11:39:45 +0800</pubDate>
+      
+      <guid>https://blog.gsgtzq.com/post/running-wordpress-with-docker/</guid>
+      <description>很早的时候想维护一个个人Blog，一开始通过 github home page + jekyll，奈何没精力再去把ruby玩溜，自己也不是个擅长改写前端页面的人，无疾而终。今天终于鼓起勇气，买了服务器和域名，部署了wordpress，毕竟wordpress易用易上手，模板也多，也就懒得自己改了。既然本Blog是运行在Docker之上的，那第一篇文章也就来说说这个吧。
+部署方式介绍  我的服务器安装的是Arch Linux，自己也是比较喜欢这个极简的Linux发行版。 我使用了docker-compose来做镜像编排工具，nginx，mysql(mairadb)，wordpress分别运行于不同的容器。 托上面两个先决条件的福，下面的内容大家根据自己的实际环境，酌情选择。  准备工作 安装Docker 托Arch Linux的福，安装Docker非常简单。
+pacman -S docker 安装docker-compose 同样是托Arch的福，安装依旧简单粗暴。
+pacman -S docker-compose 准备配置 首先我们需要做的是准备好docker wordpress运行的用户，执行以下命令，添加一个叫wordpress的新用户，将它添加到docker用户组，并为它设置密码 useradd -m -s /bin/zsh wordpress usermod -a -G docker wordpress passwd wordpress 紧接着，创建一些目录，保存docker-compose配置文件，存储运行产生的文件，让数据库落地到本机而不是容器，执行以下命令 su - wordpress cd mkdir wordpress-compose touch docker-compose.yml mkdir -p wordpress-compose/db-data mkdir -p wordpress-compose/logs/nginx mkdir -p wordpress-compose/nginx mkdir -p wordpress-compose/wordpress 这些目录和文件的功能分别如下：
+   目录或文件 含义     wordpress-compose 容器相关根目录   wordpress-compose/db-data 数据库数据存储目录   wordpress-compose/logs/nginx nginx存储目录   wordpress-compose/nginx nginx配置文件   wordpress-compose/wordpress wordpress本体，因为安装插件等会改变php文件    接下来我们编写必要的nginx配置文件。在wordpress-compose/nginx下新建wordpress.</description>
+    </item>
+    
+  </channel>
+</rss>

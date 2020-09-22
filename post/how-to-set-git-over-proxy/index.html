@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+         
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>设置git代理的正确姿势</title>
+        
+        <style>
+
+    html body {
+        font-family: 'Raleway', sans-serif;
+        background-color: white;
+    }
+
+    :root {
+        --accent: red;
+        --border-width:  5px ;
+    }
+
+</style>
+
+
+<link rel="stylesheet" href="https://blog.gsgtzq.com/css/main.css">
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway" type="text/css">
+
+
+ <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/solarized-dark.min.css"> 
+
+
+<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+ 
+
+
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/go.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/objectivec.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/python.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/bash.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/nginx.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/json.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/ini.min.js"></script> 
+
+    <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script>$(document).on('click', function() { $('.collapse').collapse('hide'); })</script>
+ <meta name="generator" content="Hugo 0.75.1" />
+        
+        
+
+        
+        
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-102689387-1"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments)};
+          gtag('js', new Date());
+
+          gtag('config', 'UA-102689387-1');
+        </script>
+        
+    </head>
+
+    
+    
+    <script src="https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+    <body>
+         
+        <nav class="navbar navbar-default navbar-fixed-top">
+
+            <div class="container">
+
+                <div class="navbar-header">
+
+                    <a class="navbar-brand visible-xs" href="#">设置git代理的正确姿势</a>
+
+                    <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                </div>
+
+                <div class="collapse navbar-collapse">
+
+                    
+                        <ul class="nav navbar-nav">
+                            
+                                <li><a href="/">Home</a></li>
+                            
+                                <li><a href="/post/">Posts</a></li>
+                            
+                                <li><a href="/tags/">Tags</a></li>
+                            
+                        </ul>
+                    
+
+                    
+                        <ul class="nav navbar-nav navbar-right">
+                            
+                                <li class="navbar-icon"><a href="mailto:gsgtzq@gmail.com"><i class="fa fa-envelope-o"></i></a></li>
+                            
+                                <li class="navbar-icon"><a href="https://github.com/gsgtzq/"><i class="fa fa-github"></i></a></li>
+                            
+                        </ul>
+                    
+
+                </div>
+
+            </div>
+
+        </nav>
+
+
+<main>
+
+    <div class="item">
+
+    
+    
+    
+
+    
+    
+
+    <h4><a href="/post/how-to-set-git-over-proxy/">设置git代理的正确姿势</a></h4>
+    <h5>2020-03-09T22:08:50&#43;08:00</h5>
+    
+    <a href="https://blog.gsgtzq.com/tags/git"><kbd class="item-tag">git</kbd></a>
+    
+    <a href="https://blog.gsgtzq.com/tags/proxy"><kbd class="item-tag">proxy</kbd></a>
+    
+
+</div>
+
+
+    <br> <div class="text-justify"><h2 id="前言">前言</h2>
+<p>众所周知，由于国内的网络环境限制，github时不时会出现连接困难的情况，web访问还好，大家手段还是比较多的，但是git可能会比较头疼，有天我推送代码到github时，SSH卡得我一头包，遂折腾了一波git代理，整理下来。</p>
+<h2 id="物料准备">物料准备</h2>
+<ul>
+<li>一个访问git流畅的代理</li>
+<li>知道自己的代理的本地协议，通常为socks5或http</li>
+<li>知道自己访问的git服务器使用了哪个协议，可能是这三种：<code>git</code>，<code>ssh</code>，<code>https</code></li>
+</ul>
+<h2 id="设置和取消">设置和取消</h2>
+<p>根据要访问git服务器的协议，选择对应的设置，同时注意<code>更换自己代理的本地协议和端口</code>。</p>
+<h3 id="httphttps协议">HTTP/HTTPS协议</h3>
+<p>可以使用以下命令设置全局代理。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git config --global https.proxy http://127.0.0.1:1080
+git config --global https.proxy http://127.0.0.1:1080
+
+
+</code></pre></div><p>也可以通过只设置对应域名的http代理，减少来来回回的配置次数</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git config --global http.https://github.com.proxy http://127.0.0.1:1080
+git config --global https.https://github.com.proxy http://127.0.0.1:1080
+</code></pre></div><p>也可编辑<code>~/.gitconfig</code>文件，加入如下设置</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[http]</span>
+        <span style="color:#a6e22e">proxy</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">http://127.0.0.1:1080</span>
+<span style="color:#66d9ef">[https]</span>
+        <span style="color:#a6e22e">proxy</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">http://127.0.0.1:1080</span>
+</code></pre></div><p>可以使用以下命令或<strong>删除配置文件</strong>中对应行，删除代理</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git config --global --unset https.proxy
+git config --global --unset https.proxy
+</code></pre></div><h3 id="ssh协议">SSH协议</h3>
+<p>当使用SSH协议时，会通过SSH客户端进行通信，所以要设置SSH客户端的代理，通过更改<code>~/.ssh/config</code>文件，增加配置可设置SSH代理。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># socks5协议</span>
+Host github.com
+    ProxyCommand nc -X <span style="color:#ae81ff">5</span> -x 127.0.0.1:1080 %h %p
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># http协议</span>
+Host github.com
+    ProxyCommand nc  -X connect -x 127.0.0.1:1080 %h %p
+</code></pre></div><p>windows下可以使用自行安装的<code>nc</code>或者使用windows自己的connect命令，完成代理。我没有windows设备所以没有进行试验。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># socks5协议</span>
+Host github.com
+    ProxyCommand connect -S 127.0.0.1:1080 %h %p
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># http协议</span>
+Host github.com
+    ProxyCommand connect -H 127.0.0.1:1080 %h %p
+</code></pre></div><h3 id="git协议">GIT协议</h3>
+<p>git协议我很少使用，没有尝试配置git协议的代理，不过在gist上找到了一个<a href="https://gist.github.com/sit/49288">年代久远的配置方法</a>，具体原理是使用socat做一个代理脚本，然后设置<code>core.proxy</code>即可完成代理，有兴趣的朋友可以试试。</p>
+<h2 id="坑点总结">坑点总结</h2>
+<ul>
+<li><code>nc</code>命令包是在<code>linux</code>下的软件包是<code>netcat</code>，它可能有两个版本<code>openbsd-netcat</code>和<code>gnu-netcat</code>，两个实现不一样，命令行也有所区别，文章中使用的是<code>openbsd-netcat</code>，<code>gnu-netcat</code>的命令会有所不同，<strong>我没有找到对应的等效命令</strong>，注意使用哦。</li>
+<li><strong>部分linux环境下</strong>，可能存在<code>socks5</code>协议报错<code>cannot resolve hostname xxxx</code>，可以尝试把协议更换为<code>socks5h</code>，我的arch下有这个问题。两者的区别在于<code>socks5</code>仅在通信时使用，而<code>socks5h</code>则是在解析host时同样使用。</li>
+</ul>
+</div>
+
+    
+    
+
+    
+
+    
+
+</main>
+
+        <footer>
+
+            <p class="copyright text-muted">© All rights reserved. Powered by <a href="https://gohugo.io">Hugo</a> and <a href="https://github.com/gsgtzq/minimal">Minimal</a></p>
+
+        </footer>
+       
+    </body>
+
+</html>
+

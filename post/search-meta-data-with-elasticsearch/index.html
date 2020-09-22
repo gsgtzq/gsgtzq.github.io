@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+         
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>用Elasticsearch来检索元数据</title>
+        
+        <style>
+
+    html body {
+        font-family: 'Raleway', sans-serif;
+        background-color: white;
+    }
+
+    :root {
+        --accent: red;
+        --border-width:  5px ;
+    }
+
+</style>
+
+
+<link rel="stylesheet" href="https://blog.gsgtzq.com/css/main.css">
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway" type="text/css">
+
+
+ <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/solarized-dark.min.css"> 
+
+
+<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+ 
+
+
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/go.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/objectivec.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/python.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/bash.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/nginx.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/json.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/ini.min.js"></script> 
+
+    <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script>$(document).on('click', function() { $('.collapse').collapse('hide'); })</script>
+ <meta name="generator" content="Hugo 0.75.1" />
+        
+        
+
+        
+        
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-102689387-1"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments)};
+          gtag('js', new Date());
+
+          gtag('config', 'UA-102689387-1');
+        </script>
+        
+    </head>
+
+    
+    
+    <script src="https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+    <body>
+         
+        <nav class="navbar navbar-default navbar-fixed-top">
+
+            <div class="container">
+
+                <div class="navbar-header">
+
+                    <a class="navbar-brand visible-xs" href="#">用Elasticsearch来检索元数据</a>
+
+                    <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                </div>
+
+                <div class="collapse navbar-collapse">
+
+                    
+                        <ul class="nav navbar-nav">
+                            
+                                <li><a href="/">Home</a></li>
+                            
+                                <li><a href="/post/">Posts</a></li>
+                            
+                                <li><a href="/tags/">Tags</a></li>
+                            
+                        </ul>
+                    
+
+                    
+                        <ul class="nav navbar-nav navbar-right">
+                            
+                                <li class="navbar-icon"><a href="mailto:gsgtzq@gmail.com"><i class="fa fa-envelope-o"></i></a></li>
+                            
+                                <li class="navbar-icon"><a href="https://github.com/gsgtzq/"><i class="fa fa-github"></i></a></li>
+                            
+                        </ul>
+                    
+
+                </div>
+
+            </div>
+
+        </nav>
+
+
+<main>
+
+    <div class="item">
+
+    
+    
+    
+
+    
+    
+
+    <h4><a href="/post/search-meta-data-with-elasticsearch/">用Elasticsearch来检索元数据</a></h4>
+    <h5>2018-04-26T18:42:10&#43;08:00</h5>
+    
+
+</div>
+
+
+    <br> <div class="text-justify"><p>近期整理公司所有的数据库元数据，需要大家坐下来一起看数据库字段是否合规，对着 Excel 表格着实看着蛋疼。心想借 ES 的全文检索之手，用 React 写个小工具边查边找问题，岂不美哉？二话不说着手开做。</p>
+<h2 id="elasticsearch-的-ik-分词插件">Elasticsearch 的 ik 分词插件</h2>
+<p>ES 自带的分词插件略不好用，对中文不友好也不太符合中国人民的习惯。果断安装 ES 出名的中文分词器<a href="https://github.com/medcl/elasticsearch-analysis-ik">elasticsearch-analysis-ik</a>。</p>
+<h3 id="安装">安装</h3>
+<p>插件官方推荐使用 elasticsearch-plugin install 命令进行安装，经个人测试，会出问题，可能跟我 ES 的运行环境是 docker 有关，配置文件被安装去了/etc/elasticsearch/config 目录下，而 docker 的 ES 启动时并不会鸟这个目录下的文件，之后就各种找不到文件。</p>
+<p>我选择了直接下载 zip 包并在 plugins 目录下解压的方式，完美运行。</p>
+<ul>
+<li>从 github 下载对应 ES 版本的 ik 分词插件 zip 包。</li>
+<li>在 ES 所在目录的 plugins 目录下解压，删除 zip 压缩包。</li>
+<li>重启 ES</li>
+</ul>
+<h3 id="测试">测试</h3>
+<p>ES 的整体 API 风格全部是 RESTFul，因此非常容易测试，只需要一个简单的 CURL POST 即可解决问题。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl -X POST  -H <span style="color:#e6db74">&#39;Content-type: application/json&#39;</span> -d <span style="color:#e6db74">&#39;{
+</span><span style="color:#e6db74">    &#34;text&#34;: &#34;中华人民共和国国歌&#34;,
+</span><span style="color:#e6db74">    &#34;analyzer&#34;: &#34;ik_max_word&#34;
+</span><span style="color:#e6db74">}&#39;</span> <span style="color:#e6db74">&#39;http://localhost:9200/_analyze?pretty=true&#39;</span>
+</code></pre></div><p>返回结果如果如下所示即为安装成功。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;tokens&#34;</span>: [
+    {
+      <span style="color:#f92672">&#34;token&#34;</span>: <span style="color:#e6db74">&#34;中华人民共和国&#34;</span>,
+      <span style="color:#f92672">&#34;start_offset&#34;</span>: <span style="color:#ae81ff">0</span>,
+      <span style="color:#f92672">&#34;end_offset&#34;</span>: <span style="color:#ae81ff">7</span>,
+      <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;CN_WORD&#34;</span>,
+      <span style="color:#f92672">&#34;position&#34;</span>: <span style="color:#ae81ff">0</span>
+    },
+    {
+      <span style="color:#f92672">&#34;token&#34;</span>: <span style="color:#e6db74">&#34;中华人民&#34;</span>,
+      <span style="color:#f92672">&#34;start_offset&#34;</span>: <span style="color:#ae81ff">0</span>,
+      <span style="color:#f92672">&#34;end_offset&#34;</span>: <span style="color:#ae81ff">4</span>,
+      <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;CN_WORD&#34;</span>,
+      <span style="color:#f92672">&#34;position&#34;</span>: <span style="color:#ae81ff">1</span>
+    },
+    {
+      <span style="color:#f92672">&#34;token&#34;</span>: <span style="color:#e6db74">&#34;中华&#34;</span>,
+      <span style="color:#f92672">&#34;start_offset&#34;</span>: <span style="color:#ae81ff">0</span>,
+      <span style="color:#f92672">&#34;end_offset&#34;</span>: <span style="color:#ae81ff">2</span>,
+      <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;CN_WORD&#34;</span>,
+      <span style="color:#f92672">&#34;position&#34;</span>: <span style="color:#ae81ff">2</span>
+    }
+    <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">忽略以下更多内容</span>
+  ]
+}
+</code></pre></div><h2 id="导入-excel-数据至-elasticsearch">导入 Excel 数据至 Elasticsearch</h2>
+<p>Excel 的文件内容非常简单，WorkBook 即为多个 Sheet 的集合，单个 Sheet 的中的“数据”均以为数组存在，且称之为“数据包”，“数据包”又包含了格式属性以及 raw 数据。因此我们使用前人的库读写 excel 时其实很简单，只需要找到需要的“数据包”取其中 raw 数据即可。</p>
+<p>前期已经由其他同事把公司所有的数据库全部导出至 excel 了，所以我需要先写一个脚本把 excel 导入到 ES 中去，导入 ES 的脚本很简单，使用<a href="https://www.npmjs.com/package/xlsx">xlsx 库</a>，完美读取 excel，整理成合适的对象用<a href="https://www.npmjs.com/package/elasticsearch">elasticsearch 库</a>写入 ES 即可。期间也会有一些小问题，整理如下。</p>
+<ul>
+<li>
+<p>Excel 合并后的单元格，在代码读取的时候只认为合并前的左上角的单元格有数据，其他单元格都是不存在的，Sheet 中的**!merges**属性可以查到哪些单元格合并了。</p>
+</li>
+<li>
+<p>ElasticSearch 的 API 均为异步 API，元本想直接忽略异步结果，因为并没有太大意义，结果写入过程中会报错 timeout，我因为数据不多也就 4k 条，直接使用 async/await 同步化了。</p>
+</li>
+</ul>
+<h2 id="设置字段对应的-mapping-使用-ik-分词器">设置字段对应的 mapping 使用 ik 分词器</h2>
+<p>mapping 简单讲就是这个字段对应的一些属性，例如字段类型，使用的分词器，生成的 field 有哪一些等，ES 我用的也不是很深入，只是简单配了所有字段用 ik 分词器而已，我做了如下的配置：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;columnKey&#34;</span>: {
+    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;text&#34;</span>,
+    <span style="color:#f92672">&#34;analyzer&#34;</span>: <span style="color:#e6db74">&#34;ik_max_word&#34;</span>,
+    <span style="color:#f92672">&#34;search_analyzer&#34;</span>: <span style="color:#e6db74">&#34;ik_max_word&#34;</span>,
+    <span style="color:#f92672">&#34;fields&#34;</span>: {
+      <span style="color:#f92672">&#34;keyword&#34;</span>: {
+        <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;keyword&#34;</span>,
+        <span style="color:#f92672">&#34;ignore_above&#34;</span>: <span style="color:#ae81ff">256</span>
+      }
+    }
+  }
+  <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">忽略更多的字段内容</span>
+}
+</code></pre></div><p><strong><!-- raw HTML omitted -->这步可以后做也可以先做，我是直接将 mapping 设置的代码写在了导入 Excel 的脚本前面。具体语言在这个 API 的实现上面可能有差异，具体可按 ES 官方文档进行操作。<!-- raw HTML omitted --></strong></p>
+<h2 id="设置es的跨域请求">设置ES的跨域请求</h2>
+<p>因为我使用自己编写的前端页面作为检索客户端，因此需要配置ES的跨域设置。在ES的config文件夹下找到elasticsearch.yml配置文件，在行末加入如下配置并重启ES即可。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">http.cors.enabled</span>: <span style="color:#66d9ef">true</span>
+<span style="color:#f92672">http.cors.allow-origin</span>: <span style="color:#e6db74">&#34;*&#34;</span>
+</code></pre></div><h2 id="编写前端页面">编写前端页面</h2>
+<p>为了方便省事，我直接使用了 React + Antd 编写前端页面，简单易用的组件和API，花了不到2个小时写出一个简单好用的前端界面，再利用 Docker + Nginx 简单打包成docker镜像，这个小功能也就到此结束了。</p>
+<h2 id="后记">后记</h2>
+<ul>
+<li>直接使用ik分词插件进行检索，这个已经足够好用了，但有时候觉得搜索不够精确，这个待优化。</li>
+<li>ES天生提供高亮功能，即在返回的数据中会在命中的分词前后加上高亮的任意关键词，通常都是HTML标签，这个功能还没有去探索，也不知道会不会跟React或Antd冲突。同时想到的是直接把后端API给到的字段当做HTML展示的情况下，当后端可能出现不可预料的结果的时候，前端不做过滤很容易就形成XSS，也没有深入考究过React本身或者Antd有没做这方面的考量。虽然我这只是一个很小很小的功能，想多点总是没错的。</li>
+</ul>
+</div>
+
+    
+    
+
+    
+
+    
+
+</main>
+
+        <footer>
+
+            <p class="copyright text-muted">© All rights reserved. Powered by <a href="https://gohugo.io">Hugo</a> and <a href="https://github.com/gsgtzq/minimal">Minimal</a></p>
+
+        </footer>
+       
+    </body>
+
+</html>
+

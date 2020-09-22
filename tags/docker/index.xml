@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docker on 风舞的 BLOG</title>
+    <link>https://blog.gsgtzq.com/tags/docker/</link>
+    <description>Recent content in Docker on 风舞的 BLOG</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 21 Sep 2020 20:34:39 +0800</lastBuildDate><atom:link href="https://blog.gsgtzq.com/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>浅谈 Docker 存储层与 Docker 的安全</title>
+      <link>https://blog.gsgtzq.com/post/docker-storage-layer-and-security/</link>
+      <pubDate>Mon, 21 Sep 2020 20:34:39 +0800</pubDate>
+      
+      <guid>https://blog.gsgtzq.com/post/docker-storage-layer-and-security/</guid>
+      <description>前言 前段时间，团队内的小伙伴遇到了一个神奇的问题，最终查证是 Docker Layers 文件权限从外部被修改，最终导致了 Docker 内部写文件出现问题，我们使用 Docker 的方式仍然比较原始，只是用 Docker 隔离一下执行环境而已。但由此引发我进一步探索 Docker 存储系统的好奇心。
+存储层机制探索 Docker 官方文档上面清晰记载了 Docker 存储机制的介绍。可以通过docker info命令查看当前 Docker 使用的存储层是为哪一种。官方文档也清晰介绍了再不同的主流 Linux 发行版中所使用的 Storage Driver。这里简单罗列所支持的后端文件系统，供大家探索。
+   Storage Driver Supported backing filesystems     overlay2, overlay xfs with ftype=1, ext4   aufs xfs, ext4   devicemapper direct-lvm   btrfs btrfs   zfs zfs   vfs any filesystem    其中 vfs 使用依赖于基础文件系统，意味着他性能更差，可能无法支持写时复制，还会浪费大量存储空间，也可能会因为文件系统和内核升级带来一些不必要的麻烦，仅用作于测试。</description>
+    </item>
+    
+    <item>
+      <title>通过Docker获取Let&#39;s Encrpyt通配符证书并配置Nginx</title>
+      <link>https://blog.gsgtzq.com/post/get-lets-encrypt-wildcard-certificate-with-docker-and-configure-nginx/</link>
+      <pubDate>Sun, 08 Apr 2018 19:16:35 +0800</pubDate>
+      
+      <guid>https://blog.gsgtzq.com/post/get-lets-encrypt-wildcard-certificate-with-docker-and-configure-nginx/</guid>
+      <description>前言 开发测试过程中，往往需要测试HTTPS连接是否正常，获取一个SSL证书变得越来越重要，公司的HTTPS证书和域名往往不能直接给到开发用，造成了比较大的困扰。还好有Let&amp;rsquo;s Encrpyt这样一个免费SSL证书获取的机构，如果你有一个自己的域名，那么通过Let&amp;rsquo;s Encrypt来配置HTTPS开发服务器将会变得异常轻松。同样如果自己的小网站想支持HTTPS也可以通过以下方式。
+准备工作 Let&amp;rsquo;s Encrpyt官方有一个certbot工具用以自动申请证书。我们这里使用docker来运行这个工具，减轻下载安装工具的烦恼，因此我们只需要一台装好了docker的机器即可。
+获取证书 获取docker镜像 获取最新的certbot镜像，只需要执行以下命令：
+docker pull certbot/certbot:latest 请求证书 执行以下命令，开始获取证书：
+docker run -it --rm -v /path/to/saved/cert:/etc/letsencrypt certbot/certbot --server https://acme-v02.api.letsencrypt.org/directory -d &amp;#34;*.yourdomain.com&amp;#34; --manual --preferred-challenges dns-01 certonly 记得将/path/to/saved/cert和*.yourdomain.com替换为自己相对应的路径和域名哟~
+期间会有一些操作，记录如图：
+输入email作为申请证书的用户记录
+同意Let&amp;rsquo;s Encrypt的用户协议
+同意订阅Let&amp;rsquo;s Encrypt的提醒邮件
+同意记录当前请求证书的IP
+增加DNS TXT记录
+到这里，先不要急着按回车，打开对应的域名解析服务商，按照最后的提示添加一条_acme-challenge.yourdomain.com的DNS TXT记录，我的域名使用dnspod做解析服务，解析如图：
+完成添加解析记录后，回到刚刚最后一步回车，certbot会自动验证DNS解析是否正确，并且下载证书，见到以下画面，证书也就获取完毕了。
+到此为止，证书全部获取完毕。
+配置nginx 接下来到配置nginx环节，我仍然使用docker来启动nginx，本地程序亦可参考。
+配置文件的核心是加入ssl部分的配置，将证书和key分别指向Let&amp;rsquo;s Encrypt的证书和key，添加SSL相关的配置包括协议、支持的算法等，这些可通过Mozilla SSL Configuration Generator来辅助编写，我的配置如下。
+server { listen 443 ssl http2; server_name www.gsgtzq.com; # ssl配置部分  ssl_certificate /etc/letsencrypt/live/gsgtzq.com/fullchain.pem; ssl_certificate_key /etc/letsencrypt/live/gsgtzq.com/privkey.pem; ssl_session_timeout 1d; ssl_session_cache shared:SSL:50m; ssl_session_tickets off; ssl_protocols TLSv1.</description>
+    </item>
+    
+  </channel>
+</rss>

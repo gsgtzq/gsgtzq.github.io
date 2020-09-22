@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>proxy on 风舞的 BLOG</title>
+    <link>https://blog.gsgtzq.com/tags/proxy/</link>
+    <description>Recent content in proxy on 风舞的 BLOG</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 09 Mar 2020 22:08:50 +0800</lastBuildDate><atom:link href="https://blog.gsgtzq.com/tags/proxy/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>设置git代理的正确姿势</title>
+      <link>https://blog.gsgtzq.com/post/how-to-set-git-over-proxy/</link>
+      <pubDate>Mon, 09 Mar 2020 22:08:50 +0800</pubDate>
+      
+      <guid>https://blog.gsgtzq.com/post/how-to-set-git-over-proxy/</guid>
+      <description>前言 众所周知，由于国内的网络环境限制，github时不时会出现连接困难的情况，web访问还好，大家手段还是比较多的，但是git可能会比较头疼，有天我推送代码到github时，SSH卡得我一头包，遂折腾了一波git代理，整理下来。
+物料准备  一个访问git流畅的代理 知道自己的代理的本地协议，通常为socks5或http 知道自己访问的git服务器使用了哪个协议，可能是这三种：git，ssh，https  设置和取消 根据要访问git服务器的协议，选择对应的设置，同时注意更换自己代理的本地协议和端口。
+HTTP/HTTPS协议 可以使用以下命令设置全局代理。
+git config --global https.proxy http://127.0.0.1:1080 git config --global https.proxy http://127.0.0.1:1080 也可以通过只设置对应域名的http代理，减少来来回回的配置次数
+git config --global http.https://github.com.proxy http://127.0.0.1:1080 git config --global https.https://github.com.proxy http://127.0.0.1:1080 也可编辑~/.gitconfig文件，加入如下设置
+[http] proxy = http://127.0.0.1:1080 [https] proxy = http://127.0.0.1:1080 可以使用以下命令或删除配置文件中对应行，删除代理
+git config --global --unset https.proxy git config --global --unset https.proxy SSH协议 当使用SSH协议时，会通过SSH客户端进行通信，所以要设置SSH客户端的代理，通过更改~/.ssh/config文件，增加配置可设置SSH代理。
+# socks5协议 Host github.com ProxyCommand nc -X 5 -x 127.0.0.1:1080 %h %p # http协议 Host github.</description>
+    </item>
+    
+  </channel>
+</rss>

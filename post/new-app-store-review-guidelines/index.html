@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+         
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>App Store新审核指南解读</title>
+        
+        <style>
+
+    html body {
+        font-family: 'Raleway', sans-serif;
+        background-color: white;
+    }
+
+    :root {
+        --accent: red;
+        --border-width:  5px ;
+    }
+
+</style>
+
+
+<link rel="stylesheet" href="https://blog.gsgtzq.com/css/main.css">
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway" type="text/css">
+
+
+ <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/solarized-dark.min.css"> 
+
+
+<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+ 
+
+
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/go.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/objectivec.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/python.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/bash.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/nginx.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/json.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/ini.min.js"></script> 
+
+    <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script>$(document).on('click', function() { $('.collapse').collapse('hide'); })</script>
+ <meta name="generator" content="Hugo 0.75.1" />
+        
+        
+
+        
+        
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-102689387-1"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments)};
+          gtag('js', new Date());
+
+          gtag('config', 'UA-102689387-1');
+        </script>
+        
+    </head>
+
+    
+    
+    <script src="https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+    <body>
+         
+        <nav class="navbar navbar-default navbar-fixed-top">
+
+            <div class="container">
+
+                <div class="navbar-header">
+
+                    <a class="navbar-brand visible-xs" href="#">App Store新审核指南解读</a>
+
+                    <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                </div>
+
+                <div class="collapse navbar-collapse">
+
+                    
+                        <ul class="nav navbar-nav">
+                            
+                                <li><a href="/">Home</a></li>
+                            
+                                <li><a href="/post/">Posts</a></li>
+                            
+                                <li><a href="/tags/">Tags</a></li>
+                            
+                        </ul>
+                    
+
+                    
+                        <ul class="nav navbar-nav navbar-right">
+                            
+                                <li class="navbar-icon"><a href="mailto:gsgtzq@gmail.com"><i class="fa fa-envelope-o"></i></a></li>
+                            
+                                <li class="navbar-icon"><a href="https://github.com/gsgtzq/"><i class="fa fa-github"></i></a></li>
+                            
+                        </ul>
+                    
+
+                </div>
+
+            </div>
+
+        </nav>
+
+
+<main>
+
+    <div class="item">
+
+    
+    
+    
+
+    
+    
+
+    <h4><a href="/post/new-app-store-review-guidelines/">App Store新审核指南解读</a></h4>
+    <h5>2019-06-10T18:09:25&#43;08:00</h5>
+    
+    <a href="https://blog.gsgtzq.com/tags/app-store"><kbd class="item-tag">App Store</kbd></a>
+    
+    <a href="https://blog.gsgtzq.com/tags/apple"><kbd class="item-tag">Apple</kbd></a>
+    
+    <a href="https://blog.gsgtzq.com/tags/review"><kbd class="item-tag">Review</kbd></a>
+    
+
+</div>
+
+
+    <br> <div class="text-justify"><h2 id="前言">前言</h2>
+<p>WWDC19召开，苹果重磅升级了iOS 13，分离了iPhone OS和iPad OS，为iPad带来了更多独特的功能，同时，苹果也对App Store做出了调整。接下来就来解读一下这次审核指南的改动。以及对游戏行业的一些影响。</p>
+<p>苹果官方于6月3日放出了内容更新，包括<a href="https://developer.apple.com/news/?id=06032019j" title="条款">7条修改和2条新增</a>。整体来讲，修改条款都直指<code>隐私</code>问题，有国外的评论员认为<a href="https://techcrunch.cn/?p=66036" title="苹果现在是一家隐私即服务的公司">苹果现在是一家隐私即服务的公司</a><a href="https://techcrunch.com/2019/06/03/apple-is-now-the-privacy-as-a-service-company/" title="英文版">(英文版)</a>。接下来会对每条改动进行解读。</p>
+<h2 id="解读">解读</h2>
+<h3 id="guidelines-13-and-514">Guidelines 1.3 and 5.1.4</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">In order to help keep kids’ data private, apps in the kids category and apps intended for kids cannot include third-party advertising or analytics software and may not transmit data to third parties. This guideline is now enforced for new apps. Existing apps must follow this guideline by September 3, 2019.
+</code></pre></div><p>这条是针对儿童的，苹果要求针对儿童的应用不得包含广告和数据分析软件，也不能向第三方传递数据，2019年9月3日强制执行。</p>
+<h3 id="guidelines-47">Guidelines 4.7</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">HTML5 games distributed in apps may not provide access to real money gaming, lotteries, or charitable donations, and may not support digital commerce. This functionality is only appropriate for code that’s embedded in the binary and can be reviewed by Apple. This guideline is now enforced for new apps. Existing apps must follow this guideline by September 3, 2019.
+</code></pre></div><p>这条针对的是HTML5的游戏不能含有真实的金钱交易、彩票、捐赠、电商交易。这条适用于嵌入到App中的，需要苹果审核的HTML5页面，2019年9月3日强制执行。</p>
+<p>由于众所周知的情况，国内现在有不少基于laya或白鹭的H5游戏，上线iOS通常<code>使用WebKit直接运行</code>，laya和白鹭目前支持了直接导出原生的iOS包，底层没有特别深入的研究，似乎也要使用JavaScriptCore和WebKit，更何况还有幺蛾子马甲包、套牌App等等骚操作，<code>这块目前来看苹果已经确认必须强制审查了</code>，后续只会更严。</p>
+<h3 id="guidelines-54">Guidelines 5.4</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">Because VPN provides access to sensitive data, VPN apps may not sell, use, or disclose to third parties any data for any purpose, and must commit to this in their privacy policy. Certain types of apps — such as those for parental control, content blocking, and security — from approved providers may use the NEVPNManager API.
+</code></pre></div><p>这条针对的是VPN，VPN应用不应出于任何目的向任何第三方公司披露、出售数据，且要在隐私政策中承诺这一点。</p>
+<p>看起来去年Facebook和Google的<a href="https://www.qdaily.com/articles/60883.html" title="Google and Facebook">免费VPN的隐私问题</a>，苹果做了进一步针对，加之之前VPN只允许企业帐号才可以上架App Store，VPN应用上架越来越难了。</p>
+<h3 id="guideline-55-new">Guideline 5.5. (New)</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">Because MDM provides access to sensitive data, MDM apps must request the mobile device management capability, and may only be offered by commercial enterprises, such as business organizations, educational institutions, or government agencies, and, in limited cases, companies utilizing MDM for parental controls. MDM apps may not sell, use, or disclose to third parties any data for any purpose, and must commit to this in their privacy policy.
+</code></pre></div><p>这条政策是新加的，针对了苹果提供的<a href="https://en.wikipedia.org/wiki/Mobile_device_management" title="Mobile device management">Mobile device management</a>服务计划，同样的使用MDM服务的应用或者服务供应商也不应出于任何目的向任何第三方公司披露、出售数据。</p>
+<p>年底听到小道消息，苹果不再颁发Developer Enterprise Program，因为滥用严重，免费VPN和一些不合法的色情应用也是用Developer Enterprise Program分发的，结果出了事。MDM同样存在这种问题。<code>MDM能提供的能力更强悍</code>，列两张图给大家感受一下。</p>
+<h4 id="设备信息查询">设备信息查询</h4>
+<p><img src="/img/20190610/device_info_queries.png" alt="img"></p>
+<h4 id="设备管理">设备管理</h4>
+<p><img src="/img/20190610/device_managed.png" alt="img"></p>
+<p>而且据我所知已经有灰色、黑色产业，幺蛾子也已经用上了。根据以往苹果新加条款后的行动力，<code>目测还会有放一波监管大招</code>。</p>
+<h3 id="guideline-513i">Guideline 5.1.3(i)</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">Apps may use a user’s health or fitness data to provide a benefit directly to that user, such as a reduced insurance premium, if the app is submitted by the entity providing the benefit and the data is not shared with a third party. The developer must also disclose to the user the specific health data collected from the device.
+</code></pre></div><p>这条是针对苹果健康数据的，苹果明确指出了如果你的应用给用户提供了利益而且不与第三方共享数据，那么这个应用可以使用苹果健康的数据。主要是针对一些直接<code>下沉到C端的保险行业</code>，我了解不是很深，就不做过多评价了。</p>
+<h3 id="guideline-511viii-new">Guideline 5.1.1(viii) (New)</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">Apps that compile information from any source that is not directly from the user or without the user’s explicit consent, even public databases, are not permitted on the App Store.
+</code></pre></div><p>这条也是新加的字面意思是，应用程序不能在未经用户允许情况下暴露程序编译信息。emmm，感觉很鬼畜，但能隐约感受到这条想针对的问题，单一应用的Bug，依然可能导致对iOS系统甚至硬件层面的损坏。编译信息就能暴露很多东西了，稍微接触过越狱开发，接触过苹果开发生态工具链的朋友，对这样子的信息是非常敏锐的。<code>佛曰：不可说</code>。</p>
+<h3 id="guideline-511ii">Guideline 5.1.1(ii)</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">Apps must get consent for data collection, even if the data is considered anonymous at the time of or immediately following collection.
+</code></pre></div><p>这条指出，收集数据必须要使用用户的人同意，而且收集过程必须匿名。</p>
+<p>说的很简单，但是并没有明确指出，哪些可以收集，哪些不能收集，哪些收集要脱敏，这仍然导致数据的收集是模糊的，不确定的，苹果审核过程也是可松可紧。如同<code>稍许盐巴，适量酱油</code>不清不楚，<code>这也将给开发者，特别是曾经过度收集隐私或严重依赖隐私的公司产品带来困难——如何界定隐私收集</code>。独立开发者应该没有特别大的问题。</p>
+<h3 id="guideline-113">Guideline 1.1.3</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">Apps may not facilitate purchase of ammunition.
+</code></pre></div><p>美国部分州枪支弹药合法，加上<a href="https://zh.wikipedia.org/wiki/%E5%9F%BA%E7%9D%A3%E5%9F%8E%E6%B8%85%E7%9C%9F%E5%AF%BA%E6%A7%8D%E6%93%8A%E6%A1%88" title="克赖斯特彻奇清真寺枪击案">克赖斯特彻奇清真寺枪击案</a>，苹果担心自己提供的<code>便利被不法分子利用</code>。</p>
+<h3 id="guideline-427">Guideline 4.2.7</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">Remote desktop clients now include game consoles owned by the user. Software appearing in the client must be fully executed on the host device.
+</code></pre></div><p>这条是针对诸如<a href="https://store.steampowered.com/steamlink/about/" title="Steam Link">Steam Link</a>一类的应用，用以确保这样子的App能有一个完整体验。此处找到一篇关于xCloud的文章 <a href="https://mspoweruser.com/apple-releases-updated-app-store-rules-microsofts-project-xcloud-streaming-app-may-get-rejected/">Apple releases updated App Store rules, Microsoft’s Project xCloud streaming app may get rejected</a> 在此摘抄关键部分供大家直接理解。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">Among the updated guidelines, section 4.2.7 caught my attention. Apple now allows remote desktop clients for game consoles owned by the user.
+Software appearing in the client must be fully executed on the host device. Steam Link app is a great example, games will be streamed from Steam console to your iOS device.
+While Steam Link is now allowed in App Store, what about cloud-based game streaming services like Microsoft’s Project xCloud or Google’s Stadia? They are more likely to get rejected if they don’t follow any one of the below rules.
+
+(a) The app must only connect to a user-owned host device that is a personal computer or dedicated game console owned by the user, and both the host device and client must be connected on a local and LAN-based network.
+(b) Any software or services appearing in the client are fully executed on the host device, rendered on the screen of the host device, and may not use APIs or platform features beyond what is required to stream the Remote Desktop.
+(c) All account creation and management must be initiated from the host device.
+(d) The UI appearing on the client does not resemble an iOS or App Store view, does not provide a store-like interface, or include the ability to browse, select, or purchase software not already owned or licensed by the user. For the sake of clarity, transactions taking place within mirrored software do not need to use in-app purchase, provided the transactions are processed on the host device.
+
+Basically, Apple won’t even allow xCloud or Stadia services to display a list of games that can be purchased for streaming. My guess is that Apple will bend the rules for Microsoft and Google as they can’t afford to lose huge amount of subscription money. Imagine millions of subscribers paying $20 per month to Microsoft and Google, Apple can potentially earn $6 per month per user for just allowing these apps in App Store.
+</code></pre></div><h3 id="锁区和演示">锁区和演示</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">Demo videos of app functionality that is geo-locked or otherwise restricted are not accepted. Developers must provide a fully functional app for review.
+</code></pre></div><p>苹果不接受在应用审核期间，只提供视频，但是应用本身锁区或者其他方式实现的跨区域锁定，必须要提供完整内容给审核人员审查。</p>
+<p>这个不是具体的条款内容，但也列在了此次指南改动里，<code>充分说明这种做法已经引起了苹果注意</code>，国内游戏行业，也却有公司以这种方式绕过苹果的审核，做诸如马甲包之类的行为。</p>
+<h3 id="apple登录">Apple登录</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">Sign In with Apple will be available for beta testing this summer. It will be required as an option for users in apps that support third-party sign-in when it is commercially available later this year.
+</code></pre></div><p>苹果开发了一个<code>Sign In with Apple</code>的功能组件，类似于Facebook的登录，但是苹果在WWDC19会议现场讲到，这个产品将更加注重用户隐私，不主动暴露用户的Email等，用户主动选择方可公开。</p>
+<p>有趣的是，苹果还提到接下来的应用，凡是提供了第三方登录的，必须要接入这个产品，且要放置在其他登录方式之前，<a href="https://tech.sina.com.cn/roll/2019-06-10/doc-ihvhiqay4566954.shtml">这似乎引起了很大的争议</a>。在中国~~<code>腾讯</code>~~特色登录之下讨论尤甚，国外似乎对此没有过多的讨论。但不得不说，苹果这招，确实可以在苹果生态内提供<code>更加优秀的登录体验</code>。</p>
+<p>游戏开发自然也是会受到一些影响，提供第三方登录的，<code>需要为iOS设计和开发额外的登录逻辑</code>。~~同时，<code>这也增加了跨操作系统打通的难度</code>，因为目前看演示，这个功能组件并不能在非苹果生态的操作系统上使用。~~经证实，<code>Sign In with Apple</code>将提供跨平台的实现，<code>目前还没有找到官方指导</code>。目前<a href="https://developer.apple.com/design/human-interface-guidelines/sign-in-with-apple/overview/">UI设计指南</a>和<a href="https://developer.apple.com/documentation/authenticationservices">API文档</a>都已放出，喜欢尝鲜或者认为需要提前准备的朋友，可以入手了哦。</p>
+<h2 id="总结">总结</h2>
+<p>苹果这波审核指南的改动，大多针对隐私问题，有政策原因，也有苹果主动向普通用户示好：我们非常重视您的隐私。因此，我也认同<code>苹果现在是一家隐私即服务的公司</code>的说法。接下来获取苹果用户的隐私行为将会面临更多困难。</p>
+<p>拒绝锁区和Apple登录产品也列在指南内，前者我的理解是针对<code>锁区干坏事</code>进行定向爆破。后者是想借机推广自己的服务，但可能不太符合中国国情<del>没错又是你腾讯</del>。</p>
+</div>
+
+    
+    
+
+    
+
+    
+
+</main>
+
+        <footer>
+
+            <p class="copyright text-muted">© All rights reserved. Powered by <a href="https://gohugo.io">Hugo</a> and <a href="https://github.com/gsgtzq/minimal">Minimal</a></p>
+
+        </footer>
+       
+    </body>
+
+</html>
+

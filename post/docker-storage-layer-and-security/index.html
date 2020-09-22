@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+         
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>浅谈 Docker 存储层与 Docker 的安全</title>
+        
+        <style>
+
+    html body {
+        font-family: 'Raleway', sans-serif;
+        background-color: white;
+    }
+
+    :root {
+        --accent: red;
+        --border-width:  5px ;
+    }
+
+</style>
+
+
+<link rel="stylesheet" href="https://blog.gsgtzq.com/css/main.css">
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway" type="text/css">
+
+
+ <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/solarized-dark.min.css"> 
+
+
+<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+ 
+
+
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/go.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/objectivec.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/python.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/bash.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/nginx.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/json.min.js"></script>  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/languages/ini.min.js"></script> 
+
+    <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script>$(document).on('click', function() { $('.collapse').collapse('hide'); })</script>
+ <meta name="generator" content="Hugo 0.75.1" />
+        
+        
+
+        
+        
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-102689387-1"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments)};
+          gtag('js', new Date());
+
+          gtag('config', 'UA-102689387-1');
+        </script>
+        
+    </head>
+
+    
+    
+    <script src="https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+    <body>
+         
+        <nav class="navbar navbar-default navbar-fixed-top">
+
+            <div class="container">
+
+                <div class="navbar-header">
+
+                    <a class="navbar-brand visible-xs" href="#">浅谈 Docker 存储层与 Docker 的安全</a>
+
+                    <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                </div>
+
+                <div class="collapse navbar-collapse">
+
+                    
+                        <ul class="nav navbar-nav">
+                            
+                                <li><a href="/">Home</a></li>
+                            
+                                <li><a href="/post/">Posts</a></li>
+                            
+                                <li><a href="/tags/">Tags</a></li>
+                            
+                        </ul>
+                    
+
+                    
+                        <ul class="nav navbar-nav navbar-right">
+                            
+                                <li class="navbar-icon"><a href="mailto:gsgtzq@gmail.com"><i class="fa fa-envelope-o"></i></a></li>
+                            
+                                <li class="navbar-icon"><a href="https://github.com/gsgtzq/"><i class="fa fa-github"></i></a></li>
+                            
+                        </ul>
+                    
+
+                </div>
+
+            </div>
+
+        </nav>
+
+
+<main>
+
+    <div class="item">
+
+    
+    
+    
+
+    
+    
+
+    <h4><a href="/post/docker-storage-layer-and-security/">浅谈 Docker 存储层与 Docker 的安全</a></h4>
+    <h5>2020-09-21T20:34:39&#43;08:00</h5>
+    
+    <a href="https://blog.gsgtzq.com/tags/docker"><kbd class="item-tag">Docker</kbd></a>
+    
+    <a href="https://blog.gsgtzq.com/tags/%E5%AE%89%E5%85%A8"><kbd class="item-tag">安全</kbd></a>
+    
+    <a href="https://blog.gsgtzq.com/tags/security"><kbd class="item-tag">Security</kbd></a>
+    
+
+</div>
+
+
+    <br> <div class="text-justify"><h2 id="前言">前言</h2>
+<p>前段时间，团队内的小伙伴遇到了一个神奇的问题，最终查证是 Docker Layers 文件权限从外部被修改，最终导致了 Docker 内部写文件出现问题，我们使用 Docker 的方式仍然比较原始，只是用 Docker 隔离一下执行环境而已。但由此引发我进一步探索 Docker 存储系统的好奇心。</p>
+<h2 id="存储层机制探索">存储层机制探索</h2>
+<p>Docker 官方文档上面清晰记载了 Docker <a href="https://docs.docker.com/storage/storagedriver/select-storage-driver/">存储机制的介绍</a>。可以通过<code>docker info</code>命令查看当前 Docker 使用的存储层是为哪一种。官方文档也清晰介绍了再不同的主流 Linux 发行版中所使用的 Storage Driver。这里简单罗列所支持的后端文件系统，供大家探索。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Storage Driver</th>
+<th style="text-align:left">Supported backing filesystems</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>overlay2</code>, <code>overlay</code></td>
+<td style="text-align:left"><code>xfs</code> with ftype=1, <code>ext4</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>aufs</code></td>
+<td style="text-align:left"><code>xfs</code>, <code>ext4</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>devicemapper</code></td>
+<td style="text-align:left"><code>direct-lvm</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>btrfs</code></td>
+<td style="text-align:left"><code>btrfs</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>zfs</code></td>
+<td style="text-align:left"><code>zfs</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>vfs</code></td>
+<td style="text-align:left">any filesystem</td>
+</tr>
+</tbody>
+</table>
+<p>其中 vfs 使用依赖于基础文件系统，意味着他性能更差，可能无法支持写时复制，还会浪费大量存储空间，也可能会因为文件系统和内核升级带来一些不必要的麻烦，仅用作于测试。</p>
+<p>那么容器的关键技术，是如何实现的呢？Linux 提供了一种叫做联合文件系统的文件系统，它具备如下特性：</p>
+<ul>
+<li>联合挂载：将多个目录按层次组合，一并挂载到一个联合挂载点。</li>
+<li>写时复制：对联合挂载点的修改不会影响到底层的多个目录，而是使用其他目录记录修改的操作。</li>
+</ul>
+<p>我们以<code>overlay2</code>为主，介绍这些特性，<code>overlay2</code> 是一个类似于 aufs 的现代的联合文件系统，并且更快。<code>overlay2</code> 已被收录进 linux 内核，它需要内核版本不低于 4.0，如果是 RHEL 或 Centos 的话则不低于 3.10.0-514。</p>
+<p><code>overlay2</code>存储结构：</p>
+<p><img src="/img/20200921/overlay-constructs.jpg" alt="img"></p>
+<p>如上，overlay2 包括 lowerdir，upperdir 和 merged 三个层次，其中：</p>
+<ul>
+<li>lowerdir：表示较为底层的目录，修改联合挂载点不会影响到 lowerdir。</li>
+<li>upperdir：表示较为上层的目录，修改联合挂载点会在 upperdir 同步修改。</li>
+<li>merged：是 lowerdir 和 upperdir 合并后的联合挂载点。</li>
+<li>workdir：用来存放挂载后的临时文件与间接文件。</li>
+</ul>
+<p>我们运行一个简单的 ubuntu 容器来探索 overlay 的实现：</p>
+<pre><code># docker run -it --rm ubuntu
+</code></pre><p>在运行容器后，可以通过 mount 命令查看其具体挂载信息：</p>
+<pre><code># mount |grep overlay
+overlay on /var/lib/docker/overlay2/1ae867af8b890091114043664890dbc66e8ee85ed9028821382ff209c3b49c88/merged type overlay (rw,relatime,lowerdir=/var/lib/docker/overlay2/l/CXPX3MTKXRWCCTDI723QPVMLWV:/var/lib/docker/overlay2/l/5Q2UCPXG7B4H3A6FGTE7QUKYKG:/var/lib/docker/overlay2/l/SZJBHQVS4KCZDSDTJKVMQRD5Q4:/var/lib/docker/overlay2/l/2Q6YB6SGESTUHJIPH6YUAQFUFV:/var/lib/docker/overlay2/l/MSVNCKFMOZPVICW6E422LHH7RE,upperdir=/var/lib/docker/overlay2/1ae867af8b890091114043664890dbc66e8ee85ed9028821382ff209c3b49c88/diff,workdir=/var/lib/docker/overlay2/1ae867af8b890091114043664890dbc66e8ee85ed9028821382ff209c3b49c88/work,index=off)
+</code></pre><p>这里清晰的列出了每一个挂载目录，为了方便查看，省略部分结构</p>
+<ul>
+<li>联合挂载点 merged：var/lib/docker/overlay2/1ae867af&hellip;/merged</li>
+<li>lowerdir：/var/lib/docker/overlay2/l/CXPX3MTKXRWCCTDI723QPVMLWV:&hellip;</li>
+<li>upperdir：/var/lib/docker/overlay2/1ae867af8b890&hellip;/diff</li>
+<li>workdir：/var/lib/docker/overlay2/1ae867af8b8900&hellip;/work</li>
+</ul>
+<p>不同的 Storage Driver 实现上有一些不同，在性能和支持度上均有所不同，文章也比较多，大家可以自行搜索或者这两篇文章：</p>
+<ul>
+<li><a href="https://integratedcode.us/2016/08/30/storage-drivers-in-docker-a-deep-dive/">Storage Drivers in Docker: A Deep Dive</a></li>
+<li><a href="https://blog.csdn.net/vchy_zhao/article/details/70238690">Docker 之几种 storage-driver 比较</a></li>
+</ul>
+<p>我们也可以通过<code>mount</code>命令，完成自己手动挂载出一个 overlay 文件系统，只需要按照上面的层次，准备不同的文件目录即可达到对应的效果。</p>
+<pre><code># mount -t overlay overlay -o lowerdir=lower1:lower2,upperdir=upper,workdir=work merged
+</code></pre><p>探索到这里，我们基本就搞明白了 Docker 存储系统的基本原理了。</p>
+<h2 id="存储机制的安全性">存储机制的安全性</h2>
+<p>由于在开发环境使用 Docker 的方式比较原始，宿主机和容器都是开发者自己控制的。这里就要讲到我们遇到的问题了：</p>
+<ol>
+<li>Docker 容器内使用 <code>非root</code> 用户，并挂载一个普通的目录到宿主机内。</li>
+<li>宿主机使用 <code>root</code> 或者 <code>sudo</code> 更改挂载目录权限，为任意宿主机内用户。</li>
+<li>容器内无法写文件了……</li>
+</ol>
+<p>其实这个问题本身比较简单，但是当时并没有注意这个细节，直到“顺手”执行了一下 ls 才发现……</p>
+<p>经过上面一系列的操作后，容器内外看到的文件归属用户很明显发生了变化，如果是把目录权限改成了宿主机的第一个用户的话。容器内看到的用户权限应该是 <code>1000:1000</code> 这样。反之，如果我们在容器内修改文件权限为一个非 root 用户，容器看到的权限也是一串数字。</p>
+<p>由此我们引发了一些讨论：</p>
+<ul>
+<li>Q：为什么 Docker 外修改了文件的权限，影响了容器内？</li>
+<li>A：很明显，根据上面的存储机制的介绍，容器内部的文件系统依然是存在在宿主机上的目录。</li>
+<li>Q：除了不去做这种骚操作，还有什么办法可以避开这种万分之一的问题？</li>
+<li>A：使用容器内的 root 用户可能是一个解。</li>
+<li>Q：容器内为什么没有使用 root？</li>
+<li>A：出于安全考虑……</li>
+</ul>
+<p>也因此引出我们下一个要讨论的内容。</p>
+<h2 id="docker-内使用-root-安全吗">Docker 内使用 root 安全吗？</h2>
+<p>经过试验，容器内使用 root 用户不受宿主机对文件权限的修改，那么既然小伙伴对容器内使用 root 权限存在安全的疑虑，不妨来探索下容器内使用 root 的安全性。</p>
+<p>Docker 内的 root 是宿主机的 root 吗？根据上面的 uid 相通原理，我们再通过<code>id</code>命令得知，两个 root 的 uid 是相同，的那么容器内的 root 确实是超级用户。如果 Docker 容器内的 root 用户和宿主机的 root 用户完全一致，那么 Docker 容器可以认为在权限方面拥有宿主机上 root 相应的权限，此时的 Docker 容器拥有超级管理员权限，原则上 Docker 容器本身完全有能力操纵宿主机的一切。然而，结果真是如此吗？</p>
+<p>答案自然是否定的，否则的话，Docker 的安全简直不堪一击。虽然大家都是 root 但实际在权限层面拥有巨大差异这得益于<code>Linux Capabilities</code>机制。</p>
+<p>docker 命令可以通过<code>--privileged</code>, <code>--cap-add</code>, <code>--cap-drop</code>非常容易控制容器的<code>Capabilities</code>。</p>
+<p>对于<code>Capabilities</code>感兴趣的朋友，可以参考下面这两个链接，或是搜索更多的资料学习：</p>
+<ul>
+<li><a href="https://man7.org/linux/man-pages/man7/capabilities.7.html">capabilities(7) — Linux manual page</a></li>
+<li><a href="https://www.cnblogs.com/sparkdev/p/11417781.html">Linux Capabilities 简介</a></li>
+</ul>
+<p>我们这里只做一个简单的理解：Linux 对于超级用户的特权也进行了种类繁多的划分，有划分就意味着有区别，有区别就意味着并不是所有的 root 用户都拥有相同的权限。</p>
+<p>Docker 默认启动容器的模式为非特权模式，也就是<code>--privileged=false</code>，这种情况下 root 用户的权限在容器内被极大的限制，翻看一下 Docker 源码或者搜一搜对应资料就会发现，在非特权模式下，授予容器内 root 用户的<code>Capabilities</code>仅有15项：CAP_CHOWN、 CAP_DAC_OVERRIDE、 CAP_FSETID、 CAP_MKNOD、 FOWNER、 NET_RAW、 SETGID、 SETUID、 SETFCAP、 SETPCAP、 NET_BIND_SERVICE、 SYS_CHROOT、 KILL 和 AUDIT_WRITE。这些项中没有一项涉及到系统管理的权限，也就保证了容器的安全。</p>
+<p>然而一旦使用了<code>--privileged=true</code>，容器将以特权模式运行，由于 Docker 容器与宿主机处于共享同一个内核操作系统的状态，因此，Docker 容器将完全拥有内核的管理权限。这就是一个<code>非常危险</code>的操作了。</p>
+<p>Docker 同时还支持了 <code>Linux User Namespace</code>的权限管理方式，这种情况下，容器内的用户变成了宿主机的一个普通用户，只是在默认运行状况下并不开启，有兴趣的朋友也可以搜索了解。</p>
+<p>Docker 最严重的 bug 莫过于容器逃逸，然而在搜索了大量资料后看到，非特权模式下，且 Docker 版本较新的逃逸案例几乎没有，也就意味着在容器内使用 root 用户，基本上是安全的。这里搜集了一份<a href="https://www.cnblogs.com/xiaozi/p/13423853.html">Docker 容器逃逸案例汇集</a>，供大家参考。</p>
+<h2 id="总结">总结</h2>
+<ul>
+<li>通过这次骚操作以及对 docker 存储机制的探索，搞明白了容器的存储机制是如何实现的。</li>
+<li>docker 内使用 root 用户，基本上是安全的。当然在工作负载程序中尽可能避免使用 root 也不失为一种主动保护的机制。</li>
+</ul>
+</div>
+
+    
+    
+
+    
+
+        <h4 class="page-header">Related</h4>
+
+         <div class="item">
+
+    
+    
+    
+
+    
+    
+
+    <h4><a href="/post/get-lets-encrypt-wildcard-certificate-with-docker-and-configure-nginx/">通过Docker获取Let&#39;s Encrpyt通配符证书并配置Nginx</a></h4>
+    <h5>2018-04-08T19:16:35&#43;08:00</h5>
+    
+    <a href="https://blog.gsgtzq.com/tags/https"><kbd class="item-tag">https</kbd></a>
+    
+    <a href="https://blog.gsgtzq.com/tags/docker"><kbd class="item-tag">Docker</kbd></a>
+    
+
+</div>
+ 
+
+    
+
+    
+
+</main>
+
+        <footer>
+
+            <p class="copyright text-muted">© All rights reserved. Powered by <a href="https://gohugo.io">Hugo</a> and <a href="https://github.com/gsgtzq/minimal">Minimal</a></p>
+
+        </footer>
+       
+    </body>
+
+</html>
+
